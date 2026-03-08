@@ -14,8 +14,9 @@ git commit -a -m“备注”//提交所有并备注该项改动
 
 git status//检视目前状态
 
-git push//提交到云端
+git push//本地提交到云端
 
+git pull//云端下载到本地
 
 
 #### 软件架构
