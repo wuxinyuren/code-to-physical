@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML LOG - 李紫琳</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        nav {
+            text-align: center;
+            margin: 20px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #3498db;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        .lesson {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f0f4f8;
+            border-radius: 4px;
+        }
+        .lesson a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        .project-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>HTML LOG - 李紫琳</h1>
+        <p>记录我的 Maker 学习与项目实践</p>
+    </header>
+
+    <nav>
+        <a href="#about">关于我</a>
+        <a href="#learning">学习过程</a>
+        <a href="#project">期末项目</a>
+        <a href="#others">其它</a>
+    </nav>
+
+    <section id="about">
+        <h2>关于我</h2>
+        <p>你好，我是李紫琳，目前在计算机科学与技术二班学习。</p>
+        <p>我参与的团队：[团队名称]，我们主要负责[团队分工]。</p>
+    </section>
+
+    <section id="learning">
+        <h2>学习过程</h2>
+        <div class="lesson">
+            <h3>第1课：HTML基础与文档结构</h3>
+            <p>学习了HTML标签、元素和基本页面结构。作业：完成个人介绍页面。</p>
+            <p>代码：<a href="D:\从代码到实物\my-project-2607\html\网页代码.txt">查看代码</a></p>
+        </div>
+        <div class="lesson">
+            <h3>中期Maker项目</h3>
+            <p>项目名称：[项目名]</p>
+            <p>实现功能：[核心功能]</p>
+            <p>照片：<img src="../photos/maker-project.jpg" alt="Maker项目照片" class="project-img"></p>
+        </div>
+        <!-- 继续添加更多课程 -->
+    </section>
+
+    <section id="project">
+        <h2>期末项目</h2>
+        <h3>项目创意</h3>
+        <p>我的期末项目是[项目名称]，旨在解决[问题/目标]。</p>
+        <h3>制作过程</h3>
+        <p>1. 需求分析与原型设计</p>
+        <p>2. 技术选型：</p>
+        <p>3. 开发与调试</p>
+        <h3>最终效果</h3>
+        <img src="../photos/final-project.jpg" alt="期末项目截图" class="project-img">
+        <p>演示视频：<a href="https://www.bilibili.com/xxx" target="_blank">点击查看</a></p>
+    </section>
+
+    <section id="others">
+        <h2>其它</h2>
+        <p>对课程的建议：希望增加更多实战项目案例。</p>
+        <p>学习思考：前端开发需要注重细节和用户体验。</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 李紫琳 | 学习日志</p>
+    </footer>
+</body>
+</html>
