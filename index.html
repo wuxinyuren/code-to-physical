@@ -356,6 +356,13 @@
       color: var(--blue);
     }
 
+    .video-status {
+      margin: 8px 0 0;
+      padding: 0 12px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .feature {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -586,14 +593,21 @@
         </article>
 
         <article class="project">
-          <figure><video src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4" controls muted preload="metadata"></video></figure>
+          <figure>
+            <video id="servoVideo" controls muted preload="metadata">
+              <source src="video/assignment4/wifi控制舵机演示视频.mp4" type="video/mp4">
+              当前浏览器不支持视频播放。
+            </video>
+            <div class="video-status" id="servoVideoStatus">正在优先加载本地视频...</div>
+          </figure>
           <div class="project-body">
             <span class="tag green">第四次作业</span>
             <h3>WiFi 控制舵机</h3>
             <p>使用 ESP32 建立网络控制页面，通过 WiFi 指令调整舵机角度，并保留源码和演示视频。</p>
             <div class="links">
               <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/code/assignment4/wifi控制舵机源码.txt">控制源码</a>
-              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4">演示视频</a>
+              <a href="video/assignment4/wifi控制舵机演示视频.mp4">本地视频</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4">备用远程视频</a>
             </div>
           </div>
         </article>
@@ -709,5 +723,38 @@
   <footer>
     <div class="wrap">从代码到实物课程作品集 · 本页面由仓库素材整理生成 · 期末项目待补充</div>
   </footer>
+  <script>
+    (() => {
+      const video = document.querySelector("#servoVideo");
+      const status = document.querySelector("#servoVideoStatus");
+      if (!video || !status) return;
+
+      const localSource = "video/assignment4/wifi控制舵机演示视频.mp4";
+      const remoteSource = "https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4";
+      let triedRemote = false;
+
+      video.addEventListener("loadedmetadata", () => {
+        status.textContent = video.currentSrc.includes("gitee.com")
+          ? "本地视频未读取到，已切换到备用远程视频。"
+          : "已读取本地视频，可直接点击播放。";
+      });
+
+      video.addEventListener("error", () => {
+        if (triedRemote) {
+          status.textContent = "视频暂时无法自动加载，请使用下方链接打开本地视频或备用远程视频。";
+          return;
+        }
+
+        triedRemote = true;
+        status.textContent = "未读取到本地视频，正在尝试备用远程视频...";
+        video.src = remoteSource;
+        video.load();
+      });
+
+      if (!video.currentSrc) {
+        video.src = localSource;
+      }
+    })();
+  </script>
 </body>
 </html>
