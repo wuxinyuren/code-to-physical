@@ -272,6 +272,42 @@
       gap: 18px;
     }
 
+    .final-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .final-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .final-gallery figure {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .final-gallery img {
+      aspect-ratio: 4 / 3;
+    }
+
+    .final-gallery figcaption {
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .project.featured {
+      border-color: rgba(31, 138, 112, 0.42);
+    }
+
     .project {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -441,6 +477,7 @@
 
     @media (max-width: 960px) {
       .hero-grid,
+      .final-grid,
       .feature {
         grid-template-columns: 1fr;
       }
@@ -448,6 +485,7 @@
       .stats,
       .timeline,
       .grid,
+      .final-gallery,
       .resource-list {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -475,6 +513,7 @@
       .stats,
       .timeline,
       .grid,
+      .final-gallery,
       .resource-list {
         grid-template-columns: 1fr;
       }
@@ -484,12 +523,12 @@
 <body>
   <header class="site-header">
     <nav class="nav">
-      <a class="brand" href="#top">从代码到实物</a>
+      <a class="brand" href="#top">张文豪 · 从代码到实物</a>
       <div class="nav-links" aria-label="页面导航">
         <a href="#overview">总览</a>
         <a href="#works">作业作品</a>
-        <a href="#midterm">中期项目</a>
         <a href="#final">期末项目</a>
+        <a href="#midterm">中期项目</a>
         <a href="#resources">资源入口</a>
       </div>
     </nav>
@@ -498,17 +537,17 @@
   <section class="hero" id="top">
     <div class="wrap hero-grid">
       <div>
-        <p class="eyebrow">Gitee 课程作业仓库 · 2026</p>
+        <p class="eyebrow">张文豪 · Gitee 课程作业仓库 · 2026</p>
         <h1>从网页、模型、硬件到实物作品的学习记录</h1>
-        <p>这个页面汇总《从代码到实物》课程的阶段成果，包括 Gitee 建仓、3D 手机支架、ESP32 控制、墨水屏阅读器、EDA 与 PCB，以及激光切割拼插盒。页面素材使用远程链接，单独打开这个 HTML 也可以查看图片和资料。第八节期末项目已预留位置，后续继续补充。</p>
+        <p>这个页面汇总《从代码到实物》课程的阶段成果，包括 Gitee 建仓、3D 手机支架、ESP32 控制、墨水屏阅读器、EDA 与 PCB、激光切割，以及期末智能灯带装置。期末项目使用光敏传感器、压力传感器和 WS2812 灯带完成弱光触发照明。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#works">查看作品</a>
+          <a class="button primary" href="#final">查看期末项目</a>
           <a class="button secondary" href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">查看 README</a>
         </div>
       </div>
       <div class="hero-card">
-        <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment5/拆卸后重组演示.jpg" alt="ESP32 墨水屏阅读器中期项目展示">
-        <p>中期项目：基于 ESP32 和墨水屏的简易电子书阅读器原型。</p>
+        <img src="images/assignment8/期末项目实物图.jpg" alt="期末项目智能灯带装置实物展示">
+        <p>期末项目：弱光环境下通过压力触发 WS2812 灯带点亮，并支持 30 秒自动熄灭。</p>
       </div>
     </div>
   </section>
@@ -522,10 +561,10 @@
         </div>
       </div>
       <div class="stats">
-        <div class="stat"><strong>7</strong><span>已整理章节</span></div>
-        <div class="stat"><strong>1</strong><span>中期项目</span></div>
+        <div class="stat"><strong>8</strong><span>已整理章节</span></div>
+        <div class="stat"><strong>1</strong><span>期末综合项目</span></div>
         <div class="stat"><strong>2</strong><span>PCB 设计练习</span></div>
-        <div class="stat"><strong>1</strong><span>期末项目预留</span></div>
+        <div class="stat"><strong>3</strong><span>期末 3D 打印件</span></div>
       </div>
     </section>
 
@@ -555,7 +594,7 @@
         <article class="step">
           <div class="num">06-08</div>
           <h3>制造与综合项目</h3>
-          <p>完成 PCB、激光切割，并预留期末项目入口。</p>
+          <p>完成 PCB、激光切割，并制作期末智能灯带装置。</p>
         </article>
       </div>
     </section>
@@ -669,17 +708,76 @@
           </div>
         </article>
 
-        <article class="project empty-card" id="final">
-          <figure><div class="empty-visual">第八节 · 期末项目</div></figure>
+        <article class="project featured">
+          <figure><img src="images/assignment8/期末项目实物图.jpg" alt="期末智能灯带装置实物图"></figure>
           <div class="project-body">
-            <span class="tag red">待补充</span>
-            <h3>期末项目预留</h3>
-            <p>这里预留给最终综合项目，后续可补充项目目标、设计过程、代码、模型、PCB、演示视频和总结。</p>
+            <span class="tag green">第八节 · 期末项目</span>
+            <h3>弱光压力触发智能灯带装置</h3>
+            <p>使用光敏传感器判断环境亮度，FSR 压力传感器作为触发输入，控制 WS2812 灯带点亮或熄灭。</p>
             <div class="links">
-              <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">等待更新</a>
+              <a href="#final">项目详情</a>
+              <a href="code/assignment8/期末代码.ino">期末代码</a>
+              <a href="video/assignment8/期末演示.mp4">演示视频</a>
             </div>
           </div>
         </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="final">
+      <div class="section-head">
+        <div>
+          <h2>期末项目</h2>
+          <p>期末项目是本学期的重点综合作品，整合了嵌入式编程、传感器输入、灯带控制和 3D 打印外壳。</p>
+        </div>
+      </div>
+      <div class="final-grid">
+        <article class="project featured">
+          <figure class="video-figure">
+            <video id="finalVideo" controls muted preload="metadata">
+              <source src="video/assignment8/期末演示.mp4" type="video/mp4">
+              当前浏览器不支持视频播放。
+            </video>
+            <div class="video-status" id="finalVideoStatus">正在优先加载本地期末演示视频...</div>
+          </figure>
+          <div class="project-body">
+            <span class="tag green">演示视频</span>
+            <h3>弱光压力触发智能灯带</h3>
+            <p>系统在弱光环境下响应压力传感器输入，点亮暖色 WS2812 灯带；再次触发可关闭，长时间无操作自动熄灭。</p>
+            <div class="links">
+              <a href="video/assignment8/期末演示.mp4">本地视频</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4">备用远程视频</a>
+              <a href="code/assignment8/期末代码.ino">期末代码</a>
+            </div>
+          </div>
+        </article>
+        <article class="project">
+          <figure><img src="images/assignment8/期末项目实物图.jpg" alt="期末项目实物图"></figure>
+          <div class="project-body">
+            <span class="tag green">项目实物</span>
+            <h3>传感器与 3D 打印结构</h3>
+            <p>实物由控制板、光敏模块、压力传感器、灯带和 3D 打印外壳组成，外部结构包含盒子、盖子和梯子形支架。</p>
+            <div class="links">
+              <a href="fusion_models/assignment8/期末盒子3D打印图纸.stl">盒子 STL</a>
+              <a href="fusion_models/assignment8/期末盖子3D打印图纸.stl">盖子 STL</a>
+              <a href="fusion_models/assignment8/期末梯子3D打印图纸.stl">梯子 STL</a>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div class="final-gallery">
+        <figure>
+          <img src="images/assignment8/期末项目完成过程图.jpg" alt="期末项目完成过程图">
+          <figcaption>完成过程：外壳、盖子与梯子结构装配</figcaption>
+        </figure>
+        <figure>
+          <img src="images/assignment8/期末项目完成过程图失败图.jpg" alt="期末项目调试失败图">
+          <figcaption>调试过程：灯带接线与程序烧录测试</figcaption>
+        </figure>
+        <figure>
+          <img src="images/assignment8/期末项目实物图.jpg" alt="期末项目最终实物">
+          <figcaption>最终实物：压力触发与灯带展示</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -687,7 +785,7 @@
       <div class="section-head">
         <div>
           <h2>中期项目</h2>
-          <p>ESP32 墨水屏阅读器是课程中期综合项目，包含嵌入式程序、网页上传、墨水屏显示和 3D 外壳。</p>
+          <p>中期项目材料保留较少，因此这里只作为阶段记录保存，重点展示放在期末项目。</p>
         </div>
       </div>
       <div class="feature">
@@ -730,45 +828,62 @@
         <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">README<span>完整文字说明</span></a>
         <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/code">代码目录<span>ESP32 源码与练习</span></a>
         <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/fusion_models">模型目录<span>STL 与 3D 外壳</span></a>
-        <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/laser_cutting">激光切割<span>DXF 切割文件</span></a>
+        <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/video">视频目录<span>第四次与期末演示视频</span></a>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">从代码到实物课程作品集 · 本页面由仓库素材整理生成 · 期末项目待补充</div>
+    <div class="wrap">张文豪 · 从代码到实物课程作品集 · 本页面由仓库素材整理生成</div>
   </footer>
   <script>
     (() => {
-      const video = document.querySelector("#servoVideo");
-      const status = document.querySelector("#servoVideoStatus");
-      if (!video || !status) return;
+      function setupFallbackVideo(videoId, statusId, localSource, remoteSource, loadingText) {
+        const video = document.querySelector(videoId);
+        const status = document.querySelector(statusId);
+        if (!video || !status) return;
 
-      const localSource = "video/assignment4/wifi控制舵机演示视频.mp4";
-      const remoteSource = "https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4";
-      let triedRemote = false;
+        let triedRemote = false;
 
-      video.addEventListener("loadedmetadata", () => {
-        status.textContent = video.currentSrc.includes("gitee.com")
-          ? "本地视频未读取到，已切换到备用远程视频。"
-          : "已读取本地视频，可直接点击播放。";
-      });
+        video.addEventListener("loadedmetadata", () => {
+          status.textContent = video.currentSrc.includes("gitee.com")
+            ? "本地视频未读取到，已切换到备用远程视频。"
+            : "已读取本地视频，可直接点击播放。";
+        });
 
-      video.addEventListener("error", () => {
-        if (triedRemote) {
-          status.textContent = "视频暂时无法自动加载，请使用下方链接打开本地视频或备用远程视频。";
-          return;
+        video.addEventListener("error", () => {
+          if (triedRemote) {
+            status.textContent = "视频暂时无法自动加载，请使用下方链接打开本地视频或备用远程视频。";
+            return;
+          }
+
+          triedRemote = true;
+          status.textContent = "未读取到本地视频，正在尝试备用远程视频...";
+          video.src = remoteSource;
+          video.load();
+        });
+
+        status.textContent = loadingText;
+        if (!video.currentSrc) {
+          video.src = localSource;
         }
-
-        triedRemote = true;
-        status.textContent = "未读取到本地视频，正在尝试备用远程视频...";
-        video.src = remoteSource;
-        video.load();
-      });
-
-      if (!video.currentSrc) {
-        video.src = localSource;
       }
+
+      setupFallbackVideo(
+        "#servoVideo",
+        "#servoVideoStatus",
+        "video/assignment4/wifi控制舵机演示视频.mp4",
+        "https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4",
+        "正在优先加载本地视频..."
+      );
+
+      setupFallbackVideo(
+        "#finalVideo",
+        "#finalVideoStatus",
+        "video/assignment8/期末演示.mp4",
+        "https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4",
+        "正在优先加载本地期末演示视频..."
+      );
     })();
   </script>
 </body>
