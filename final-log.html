@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="张文豪的期末项目开发日志 - 弱光压力触发智能灯带装置">
+  <meta name="keywords" content="从代码到实物,期末项目,Arduino,WS2812,FSR,光敏传感器,3D打印">
+  <title>期末项目开发日志 · 张文豪</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: #182539;
+      background: linear-gradient(135deg, #f4f8fb 0%, #e6edf2 100%);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      line-height: 1.8;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(31, 90, 140, 0.1);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 4px 20px rgba(24, 37, 57, 0.08);
+      backdrop-filter: blur(10px);
+      transition: padding 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .navbar.scrolled {
+      padding: 12px 0;
+      box-shadow: 0 2px 14px rgba(24, 37, 57, 0.12);
+    }
+
+    .navbar-inner {
+      display: flex;
+      max-width: 1120px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+
+    .logo {
+      color: #1766a6;
+      font-size: 22px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .navbar ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .navbar a:not(.logo) {
+      display: inline-flex;
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: #2c3e50;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .navbar a:not(.logo):hover {
+      background: rgba(23, 102, 166, 0.08);
+      color: #1766a6;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 42px auto;
+      padding: 0 22px;
+    }
+
+    .header-section {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: clamp(42px, 8vw, 76px) clamp(24px, 5vw, 52px);
+      color: #fff;
+      background: #163752;
+      box-shadow: 0 24px 52px rgba(23, 102, 166, 0.24);
+    }
+
+    .header-section::before {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(rgba(15, 39, 66, 0.18), rgba(15, 39, 66, 0.72));
+      content: "";
+    }
+
+    .header-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header-section h1 {
+      position: relative;
+      z-index: 2;
+      max-width: 840px;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+    }
+
+    .section {
+      margin-top: 34px;
+      border-radius: 20px;
+      padding: clamp(24px, 4vw, 42px);
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(24, 37, 57, 0.07);
+    }
+
+    .section h2 {
+      margin-bottom: 22px;
+      border-left: 6px solid #1766a6;
+      padding-left: 14px;
+      color: #0b1f33;
+      font-size: clamp(25px, 4vw, 34px);
+      line-height: 1.25;
+    }
+
+    .card {
+      border: 1px solid rgba(23, 102, 166, 0.1);
+      border-radius: 16px;
+      padding: 22px;
+      background: linear-gradient(135deg, #f9fcff 0%, #f0f7ff 100%);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #0b1f33;
+      font-size: 23px;
+    }
+
+    .card p,
+    .card li {
+      color: #334e68;
+      font-size: 16px;
+    }
+
+    .card ul {
+      margin: 10px 0 0 20px;
+    }
+
+    .project-img {
+      width: 100%;
+      margin-top: 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.12);
+      cursor: zoom-in;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project-img:hover {
+      transform: scale(1.01);
+      box-shadow: 0 12px 32px rgba(24, 37, 57, 0.18);
+    }
+
+    .media-grid,
+    .team-grid,
+    .file-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .media-grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      align-items: stretch;
+    }
+
+    .team-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .team-card {
+      border-radius: 14px;
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(24, 37, 57, 0.08);
+    }
+
+    .team-card h4 {
+      margin-bottom: 8px;
+      color: #1766a6;
+      font-size: 18px;
+    }
+
+    .video-box {
+      overflow: hidden;
+      border: 1px solid rgba(23, 102, 166, 0.12);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.12);
+    }
+
+    .video-box video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #101828;
+    }
+
+    .video-status {
+      padding: 11px 14px;
+      color: #607693;
+      font-size: 14px;
+    }
+
+    .timeline {
+      position: relative;
+      padding: 8px 0;
+    }
+
+    .timeline::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 46px;
+      width: 4px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #1766a6, #1f8a70);
+      content: "";
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+      padding-left: 92px;
+    }
+
+    .timeline-item::before {
+      position: absolute;
+      top: 9px;
+      left: 34px;
+      width: 26px;
+      height: 26px;
+      border: 4px solid #1766a6;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(23, 102, 166, 0.25);
+      content: "";
+    }
+
+    .timeline-card {
+      border-radius: 16px;
+      padding: 22px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.08);
+    }
+
+    .date {
+      display: inline-block;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      padding: 4px 12px;
+      color: #fff;
+      background: linear-gradient(135deg, #1766a6, #1f8a70);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .problem {
+      border-radius: 16px;
+      padding: 22px;
+      background: linear-gradient(135deg, #fff4e5 0%, #ffe0cc 100%);
+    }
+
+    .solution {
+      margin-top: 18px;
+      border-radius: 16px;
+      padding: 22px;
+      background: linear-gradient(135deg, #e8f5f1 0%, #d6f3df 100%);
+    }
+
+    .file-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      list-style: none;
+    }
+
+    .file-list li {
+      border: 1px solid rgba(23, 102, 166, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      background: #f9fcff;
+      color: #334e68;
+    }
+
+    .file-list a {
+      color: #1766a6;
+      font-weight: 800;
+    }
+
+    footer {
+      margin: 36px 0 0;
+      border-radius: 18px;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #607693;
+      text-align: center;
+    }
+
+    footer a {
+      color: #1766a6;
+      font-weight: 800;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 46px;
+      height: 46px;
+      border: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1766a6, #1f8a70);
+      color: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      opacity: 0;
+      box-shadow: 0 8px 24px rgba(23, 102, 166, 0.3);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-3px);
+    }
+
+    @media (max-width: 860px) {
+      .navbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .navbar ul {
+        justify-content: flex-start;
+      }
+
+      .media-grid,
+      .team-grid,
+      .file-list {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline::before {
+        left: 24px;
+      }
+
+      .timeline-item {
+        padding-left: 62px;
+      }
+
+      .timeline-item::before {
+        left: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="#top" class="logo">期末项目开发日志</a>
+      <ul>
+        <li><a href="index.html">返回主页</a></li>
+        <li><a href="#overview">项目概述</a></li>
+        <li><a href="#team">团队信息</a></li>
+        <li><a href="#timeline">开发历程</a></li>
+        <li><a href="#failures">问题解决</a></li>
+        <li><a href="#resources">资源文件</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container" id="top">
+    <section class="header-section">
+      <img class="header-bg" src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="">
+      <h1>弱光压力触发智能灯带装置</h1>
+      <p class="subtitle">张文豪 · 期末项目开发日志 · 光敏传感器 + FSR 压力传感器 + WS2812 灯带 + 3D 打印外壳</p>
+    </section>
+
+    <section class="section" id="overview">
+      <h2>项目概述</h2>
+      <div class="media-grid">
+        <div class="card">
+          <h3>项目简介</h3>
+          <p>本项目完成的是一个弱光压力触发智能灯带装置。系统通过光敏传感器判断环境亮度，在弱光或黑暗环境中进入可触发状态；当 FSR 薄膜压力传感器检测到较大压力时，WS2812 灯带点亮为暖橙色，方便夜间照明。</p>
+          <p>灯带点亮后，再次触发压力传感器可以关闭；如果 30 秒内没有操作，程序会自动熄灭灯带，避免长时间亮灯。</p>
+          <img class="project-img" src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目实物图">
+        </div>
+        <div class="video-box">
+          <video id="finalLogVideo" controls muted preload="metadata">
+            <source src="video/assignment8/期末演示.mp4" type="video/mp4">
+            当前浏览器不支持视频播放。
+          </video>
+          <div class="video-status" id="finalLogVideoStatus">正在优先加载本地期末演示视频...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="team">
+      <h2>团队信息</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <h4>张文豪</h4>
+          <p><strong>角色：</strong>硬件连接与网页整理</p>
+          <p><strong>任务：</strong>整理传感器、灯带、代码、图片和演示材料，并完成个人仓库展示。</p>
+        </div>
+        <div class="team-card">
+          <h4>结构制造</h4>
+          <p><strong>内容：</strong>盒子、盖子和梯子结构 3D 打印。</p>
+        </div>
+        <div class="team-card">
+          <h4>嵌入式控制</h4>
+          <p><strong>内容：</strong>读取光敏和压力传感器，控制 WS2812 灯带。</p>
+        </div>
+        <div class="team-card">
+          <h4>测试展示</h4>
+          <p><strong>内容：</strong>完成阈值调试、实物测试和视频演示。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="timeline">
+      <h2>开发历程</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <span class="date">方案确定</span>
+            <h3>确定夜间感应灯带方向</h3>
+            <p>围绕“弱光环境下自动或半自动照明”的需求，确定使用光敏传感器判断环境亮度，使用 FSR 压力传感器作为触发输入。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <span class="date">硬件搭建</span>
+            <h3>连接传感器和 WS2812 灯带</h3>
+            <p>将 WS2812 灯带数据引脚连接到 GPIO18，光敏传感器连接到 GPIO4，FSR 压力传感器连接到 GPIO5，通过串口观察读数变化。</p>
+            <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="硬件调试过程图">
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <span class="date">程序调试</span>
+            <h3>编写判断逻辑和自动熄灭功能</h3>
+            <p>程序根据亮度阈值判断是否处于弱光环境，再根据压力阈值触发灯带开关；灯带点亮后记录时间，超过 30 秒自动关闭。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <span class="date">结构装配</span>
+            <h3>完成 3D 打印外壳组合</h3>
+            <p>使用盒子、盖子和梯子结构组合成最终外观，并考虑灯带、传感器和线路的摆放位置。</p>
+            <img class="project-img" src="images/assignment8/期末项目完成过程图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图.jpg" alt="结构装配过程图">
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <span class="date">最终展示</span>
+            <h3>完成实物和视频记录</h3>
+            <p>最终作品能够在弱光状态下响应压力输入，点亮暖色灯带，并保留代码、模型、图片和演示视频作为期末提交材料。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="failures">
+      <h2>问题与解决</h2>
+      <div class="problem">
+        <h3>遇到的问题</h3>
+        <ul>
+          <li><strong>传感器阈值不稳定：</strong>光敏和压力传感器在不同环境下读数变化明显，需要根据实际测试重新设定阈值。</li>
+          <li><strong>灯带调试复杂：</strong>WS2812 对数据引脚、供电和库函数配置比较敏感，初期需要反复确认接线和灯珠数量。</li>
+          <li><strong>结构装配限制：</strong>外壳空间有限，线路、传感器和灯带位置需要在实物中重新调整。</li>
+        </ul>
+        <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="调试失败过程图">
+      </div>
+      <div class="solution">
+        <h3>解决方案</h3>
+        <ul>
+          <li>通过串口持续输出光敏和压力传感器读数，观察真实数据后再调整判断范围。</li>
+          <li>使用 `Adafruit_NeoPixel` 库统一控制灯带，设置较低亮度，降低测试风险。</li>
+          <li>将灯带点亮逻辑改为状态切换，并加入 30 秒自动熄灭，避免反复误触发。</li>
+          <li>根据装配结果调整传感器摆放，让压力触发和灯带展示更直观。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="resources">
+      <h2>项目资源</h2>
+      <ul class="file-list">
+        <li>嵌入式代码：<a href="code/assignment8/期末代码.ino">期末代码.ino</a></li>
+        <li>演示视频：<a href="video/assignment8/期末演示.mp4">期末演示.mp4</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4">备用远程视频</a></li>
+        <li>3D 打印模型：<a href="fusion_models/assignment8/期末盒子3D打印图纸.stl">盒子 STL</a> · <a href="fusion_models/assignment8/期末盖子3D打印图纸.stl">盖子 STL</a> · <a href="fusion_models/assignment8/期末梯子3D打印图纸.stl">梯子 STL</a></li>
+        <li>项目图片：<a href="images/assignment8/期末项目实物图.jpg">实物图</a> · <a href="images/assignment8/期末项目完成过程图.jpg">过程图</a> · <a href="images/assignment8/期末项目完成过程图失败图.jpg">调试图</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>© 2026 张文豪 · 期末项目开发日志</p>
+      <p><a href="index.html">返回课程主页</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee 仓库</a></p>
+    </footer>
+  </main>
+
+  <button class="back-to-top" id="backToTop">↑</button>
+
+  <script>
+    (() => {
+      const navbar = document.querySelector(".navbar");
+      const backToTop = document.querySelector("#backToTop");
+
+      function setupFallbackImages() {
+        document.querySelectorAll("img[data-fallback-src]").forEach((image) => {
+          image.addEventListener("error", () => {
+            const fallback = image.dataset.fallbackSrc;
+            if (!fallback || image.src === fallback) return;
+            image.src = fallback;
+          });
+        });
+      }
+
+      function setupFallbackVideo() {
+        const video = document.querySelector("#finalLogVideo");
+        const status = document.querySelector("#finalLogVideoStatus");
+        if (!video || !status) return;
+
+        const localSource = "video/assignment8/期末演示.mp4";
+        const remoteSource = "https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4";
+        let triedRemote = false;
+
+        video.addEventListener("loadedmetadata", () => {
+          status.textContent = video.currentSrc.includes("gitee.com")
+            ? "本地视频未读取到，已切换到备用远程视频。"
+            : "已读取本地视频，可直接点击播放。";
+        });
+
+        video.addEventListener("error", () => {
+          if (triedRemote) {
+            status.textContent = "视频暂时无法自动加载，请使用资源文件中的视频链接。";
+            return;
+          }
+
+          triedRemote = true;
+          status.textContent = "未读取到本地视频，正在尝试备用远程视频...";
+          video.src = remoteSource;
+          video.load();
+        });
+
+        if (!video.currentSrc) {
+          video.src = localSource;
+        }
+      }
+
+      window.addEventListener("scroll", () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 50);
+        backToTop.classList.toggle("visible", window.scrollY > 300);
+      }, { passive: true });
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      document.querySelectorAll(".project-img").forEach((image) => {
+        image.addEventListener("click", () => {
+          const viewer = document.createElement("div");
+          viewer.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.9);cursor:zoom-out;padding:24px;";
+          const copy = image.cloneNode();
+          copy.style.cssText = "max-width:92vw;max-height:92vh;object-fit:contain;border-radius:10px;";
+          viewer.appendChild(copy);
+          viewer.addEventListener("click", () => viewer.remove());
+          document.body.appendChild(viewer);
+        });
+      });
+
+      setupFallbackImages();
+      setupFallbackVideo();
+    })();
+  </script>
+</body>
+</html>
