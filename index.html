@@ -546,7 +546,7 @@
         </div>
       </div>
       <div class="hero-card">
-        <img src="images/assignment8/期末项目实物图.jpg" alt="期末项目智能灯带装置实物展示">
+        <img src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目智能灯带装置实物展示">
         <p>期末项目：弱光环境下通过压力触发 WS2812 灯带点亮，并支持 30 秒自动熄灭。</p>
       </div>
     </div>
@@ -709,7 +709,7 @@
         </article>
 
         <article class="project featured">
-          <figure><img src="images/assignment8/期末项目实物图.jpg" alt="期末智能灯带装置实物图"></figure>
+          <figure><img src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末智能灯带装置实物图"></figure>
           <div class="project-body">
             <span class="tag green">第八节 · 期末项目</span>
             <h3>弱光压力触发智能灯带装置</h3>
@@ -752,7 +752,7 @@
           </div>
         </article>
         <article class="project">
-          <figure><img src="images/assignment8/期末项目实物图.jpg" alt="期末项目实物图"></figure>
+          <figure><img src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目实物图"></figure>
           <div class="project-body">
             <span class="tag green">项目实物</span>
             <h3>传感器与 3D 打印结构</h3>
@@ -767,15 +767,15 @@
       </div>
       <div class="final-gallery">
         <figure>
-          <img src="images/assignment8/期末项目完成过程图.jpg" alt="期末项目完成过程图">
+          <img src="images/assignment8/期末项目完成过程图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图.jpg" alt="期末项目完成过程图">
           <figcaption>完成过程：外壳、盖子与梯子结构装配</figcaption>
         </figure>
         <figure>
-          <img src="images/assignment8/期末项目完成过程图失败图.jpg" alt="期末项目调试失败图">
+          <img src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="期末项目调试失败图">
           <figcaption>调试过程：灯带接线与程序烧录测试</figcaption>
         </figure>
         <figure>
-          <img src="images/assignment8/期末项目实物图.jpg" alt="期末项目最终实物">
+          <img src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目最终实物">
           <figcaption>最终实物：压力触发与灯带展示</figcaption>
         </figure>
       </div>
@@ -838,6 +838,16 @@
   </footer>
   <script>
     (() => {
+      function setupFallbackImages() {
+        document.querySelectorAll("img[data-fallback-src]").forEach((image) => {
+          image.addEventListener("error", () => {
+            const fallback = image.dataset.fallbackSrc;
+            if (!fallback || image.src === fallback) return;
+            image.src = fallback;
+          });
+        });
+      }
+
       function setupFallbackVideo(videoId, statusId, localSource, remoteSource, loadingText) {
         const video = document.querySelector(videoId);
         const status = document.querySelector(statusId);
@@ -868,6 +878,8 @@
           video.src = localSource;
         }
       }
+
+      setupFallbackImages();
 
       setupFallbackVideo(
         "#servoVideo",
