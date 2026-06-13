@@ -1,381 +1,713 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>从代码到实物：造你所想 - 课程学习页</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        // Tailwind 配置
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#165DFF',
-                        secondary: '#36CFC9',
-                        dark: '#1D2129',
-                        light: '#F2F3F5'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .section-title {
-                @apply text-3xl md:text-4xl font-bold text-dark mb-8 relative after:content-[''] after:absolute after:bottom-[-8px] after:left-0 after:w-20 after:h-1 after:bg-primary;
-            }
-            .card-hover {
-                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-            }
-            .nav-active {
-                @apply text-primary border-b-2 border-primary;
-            }
-        }
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            background-color: #F7F8FA;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>从代码到实物课程作品集</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --paper: #f6f7f9;
+      --panel: #ffffff;
+      --blue: #2457a6;
+      --green: #1f8a70;
+      --amber: #b45f06;
+      --red: #b42318;
+      --shadow: 0 12px 32px rgba(23, 32, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+
+    .nav-links a:hover {
+      background: #eef3fb;
+      color: var(--blue);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f2742 0%, #2457a6 56%, #1f8a70 100%);
+      color: #fff;
+      padding: 72px 0 64px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      font-weight: 700;
+    }
+
+    .button.primary {
+      background: #fff;
+      color: #143258;
+      border-color: #fff;
+    }
+
+    .button.secondary {
+      color: #fff;
+    }
+
+    .hero-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .hero-card img {
+      aspect-ratio: 4 / 3;
+      border-radius: 6px;
+    }
+
+    .hero-card p {
+      margin: 12px 0 0;
+      font-size: 14px;
+    }
+
+    main {
+      padding: 56px 0 72px;
+    }
+
+    section {
+      margin-top: 56px;
+    }
+
+    section:first-child {
+      margin-top: 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 36px);
+      line-height: 1.2;
+    }
+
+    .section-head p {
+      max-width: 620px;
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .step {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .step .num {
+      color: var(--green);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .step h3 {
+      margin: 8px 0 6px;
+      font-size: 17px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .project {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .project figure {
+      margin: 0;
+      background: #e9edf3;
+      aspect-ratio: 16 / 10;
+    }
+
+    .project-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .tag {
+      align-self: flex-start;
+      padding: 4px 8px;
+      border-radius: 5px;
+      background: #eef3fb;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.green {
+      background: #e8f5f1;
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: #fff4e5;
+      color: var(--amber);
+    }
+
+    .tag.red {
+      background: #fff0ee;
+      color: var(--red);
+    }
+
+    .project h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .project p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .links a {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .links a:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .feature .project figure {
+      aspect-ratio: 4 / 3;
+    }
+
+    .empty-card {
+      border: 1px dashed #a8b2c1;
+      background: #fbfcfe;
+      box-shadow: none;
+    }
+
+    .empty-visual {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      min-height: 220px;
+      color: #7a8596;
+      font-weight: 800;
+      background:
+        linear-gradient(90deg, rgba(36, 87, 166, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(36, 87, 166, 0.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .resource-list a {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .resource-list span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      color: var(--muted);
+      background: #fff;
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid,
+      .feature {
+        grid-template-columns: 1fr;
+      }
+
+      .stats,
+      .timeline,
+      .grid,
+      .resource-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        padding: 44px 0;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .stats,
+      .timeline,
+      .grid,
+      .resource-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-<body class="font-sans text-dark">
-    <!-- 导航栏 -->
-    <nav class="sticky top-0 bg-white shadow-sm z-50 py-4 px-6 md:px-12">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center mb-4 md:mb-0">
-                <i class="fa fa-cogs text-primary text-2xl mr-3"></i>
-                <h1 class="text-xl md:text-2xl font-bold">从代码到实物：造你所想</h1>
-            </div>
-            <ul class="flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base">
-                <li><a href="#intro" class="py-2 px-1 nav-active">个人介绍</a></li>
-                <li><a href="#course-process" class="py-2 px-1">课程过程</a></li>
-                <li><a href="#mid-project" class="py-2 px-1">中期项目</a></li>
-                <li><a href="#course-summary" class="py-2 px-1">课程总结</a></li>
-            </ul>
-        </div>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="#top">从代码到实物</a>
+      <div class="nav-links" aria-label="页面导航">
+        <a href="#overview">总览</a>
+        <a href="#works">作业作品</a>
+        <a href="#midterm">中期项目</a>
+        <a href="#final">期末项目</a>
+        <a href="#resources">资源入口</a>
+      </div>
     </nav>
+  </header>
 
-    <!-- 头部横幅 -->
-    <header class="bg-primary/90 text-white py-16 md:py-24 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">创客教育 · 造物的智慧</h2>
-            <p class="text-lg md:text-xl opacity-90 max-w-3xl mx-auto">基于麻省理工学院HTMAA课程理念，从代码到实物，培养造物能力与创新思维 | 我造物，故我在</p>
-            <div class="mt-8">
-                <a href="#course-process" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-light transition-all">
-                    开启课程学习 <i class="fa fa-arrow-down ml-2"></i>
-                </a>
-            </div>
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Gitee 课程作业仓库 · 2026</p>
+        <h1>从网页、模型、硬件到实物作品的学习记录</h1>
+        <p>这个页面汇总《从代码到实物》课程的阶段成果，包括 Gitee 建仓、3D 手机支架、ESP32 控制、墨水屏阅读器、EDA 与 PCB，以及激光切割拼插盒。第八节期末项目已预留位置，后续继续补充。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#works">查看作品</a>
+          <a class="button secondary" href="README.md">查看 README</a>
         </div>
-    </header>
+      </div>
+      <div class="hero-card">
+        <img src="images/assignment5/拆卸后重组演示.jpg" alt="ESP32 墨水屏阅读器中期项目展示">
+        <p>中期项目：基于 ESP32 和墨水屏的简易电子书阅读器原型。</p>
+      </div>
+    </div>
+  </section>
 
-    <main class="max-w-7xl mx-auto px-6 py-16 md:py-24">
-        <!-- 个人介绍 -->
-        <section id="intro" class="mb-24">
-            <h3 class="section-title">个人介绍</h3>
-            <div class="bg-white rounded-xl shadow p-6 md:p-8 card-hover">
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20">
-                        <img src="https://picsum.photos/200/200" alt="个人头像" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-2xl font-bold mb-2">张文豪（你的姓名）</h4>
-                        <p class="text-gray-600 mb-4"><i class="fa fa-book mr-2"></i> 所属专业/年级：计算机/25 | <i class="fa fa-email mr-2"></i> 联系邮箱：2191799143@qq.com</p>
-                        <p class="mb-3"><span class="font-medium">学习初衷：</span> 接触创客教育，掌握从数字代码到实体造物的全流程技能，将编程与工程实践结合，培养自己的造物能力和创新设计思维，践行“我造物，故我在”的工程哲学。</p>
-                        <p><span class="font-medium">个人期许：</span> 熟练运用3D设计、电子制作、嵌入式编程等工具，完成从创意构思到实物落地的项目开发，具备独立的创客实践能力和团队协作创新能力。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 课程过程 -->
-        <section id="course-process" class="mb-24">
-            <h3 class="section-title">课程过程</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 课程背景卡片 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-lightbulb-o"></i></div>
-                    <h4 class="text-xl font-bold mb-3">课程背景</h4>
-                    <p class="text-gray-600 mb-2">源于麻省理工学院《How to make almost anything》课程，西南交通大学本土化打造的跨学科创客课程，2020年获评国家一流本科课程。</p>
-                    <p class="text-gray-600">融合新工科、STEAM教育理念，以“造物的智慧”为核心，培养学生从代码到实物的落地能力。</p>
-                </div>
-                <!-- 学习阶段-L1 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-level-up"></i></div>
-                    <h4 class="text-xl font-bold mb-3">基础阶段（Level1）</h4>
-                    <ul class="text-gray-600 space-y-2">
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>创客文化与发展历史</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>3D/2D设计基础与软件操作</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>3D打印与数控切割实操</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>电子制作与焊接基础</li>
-                    </ul>
-                </div>
-                <!-- 学习阶段-L2 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-rocket"></i></div>
-                    <h4 class="text-xl font-bold mb-3">进阶阶段（Level2）</h4>
-                    <ul class="text-gray-600 space-y-2">
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>嵌入式计算机与ESP32开发</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>电路板设计与立创EDA使用</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>GIT团队代码管理与协作</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>网络通信与材料合成基础</li>
-                    </ul>
-                </div>
-                <!-- 学习阶段-L3 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-star"></i></div>
-                    <h4 class="text-xl font-bold mb-3">高阶阶段（Level3）</h4>
-                    <ul class="text-gray-600 space-y-2">
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>设计思维与共情/原型/测试</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>TRIZ创新方法与可持续设计</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>创新创业实践与Maker Project</li>
-                        <li><i class="fa fa-check-circle text-secondary mr-2"></i>产品量产与知识产权认知</li>
-                    </ul>
-                </div>
-                <!-- 核心工具 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-wrench"></i></div>
-                    <h4 class="text-xl font-bold mb-3">核心工具集</h4>
-                    <div class="grid grid-cols-2 gap-2 text-gray-600">
-                        <div>3D建模：Fusion360、FreeCAD</div>
-                        <div>2D设计：Inkscape、SolveSpace</div>
-                        <div>3D打印：Cura、Bambu Studio</div>
-                        <div>电子设计：立创EDA</div>
-                        <div>嵌入式编程：ESP32、Arduino IDE</div>
-                        <div>版本控制：Git、Gitee</div>
-                    </div>
-                </div>
-                <!-- 课程理念 -->
-                <div class="bg-white rounded-xl shadow p-6 card-hover">
-                    <div class="text-primary text-3xl mb-4"><i class="fa fa-book"></i></div>
-                    <h4 class="text-xl font-bold mb-3">核心教育理念</h4>
-                    <p class="text-gray-600 italic mb-2">“我造物，故我在”——工程实在论</p>
-                    <p class="text-gray-600 mb-2">造物能力是工科的核心特征，创客教育的本质是教会造物技术，培养改善世界的DIY精神。</p>
-                    <p class="text-gray-600">以原理性知识为基础，让学生成为<strong class="text-primary">创客和发现者</strong>。</p>
-                </div>
-            </div>
-
-            <!-- 课程时间线 -->
-            <div class="mt-12 bg-white rounded-xl shadow p-6 md:p-8">
-                <h4 class="text-2xl font-bold mb-6 text-center">课程学习时间线</h4>
-                <div class="relative border-l-2 border-primary/30 ml-3 md:ml-6 pl-6 md:pl-8 py-2">
-                    <div class="mb-8 relative">
-                        <div class="absolute -left-9 md:-left-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white">
-                            <i class="fa fa-play"></i>
-                        </div>
-                        <h5 class="text-xl font-bold mb-2">课程启动</h5>
-                        <p class="text-gray-600">初识创客文化，掌握课程核心目标，完成基础工具的安装与入门，建立团队协作机制。</p>
-                    </div>
-                    <div class="mb-8 relative">
-                        <div class="absolute -left-9 md:-left-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white">
-                            <i class="fa fa-pencil"></i>
-                        </div>
-                        <h5 class="text-xl font-bold mb-2">基础技能学习</h5>
-                        <p class="text-gray-600">系统学习3D/2D设计、3D打印、数控切割、电子焊接等基础技能，完成单一技能小作业。</p>
-                    </div>
-                    <div class="mb-8 relative">
-                        <div class="absolute -left-9 md:-left-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white">
-                            <i class="fa fa-code"></i>
-                        </div>
-                        <h5 class="text-xl font-bold mb-2">进阶技能实践</h5>
-                        <p class="text-gray-600">学习嵌入式编程、电路板设计、Git协作，实现代码与硬件的结合，完成简单的智能硬件小项目。</p>
-                    </div>
-                    <div class="mb-8 relative">
-                        <div class="absolute -left-9 md:-left-10 w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-white">
-                            <i class="fa fa-cog"></i>
-                        </div>
-                        <h5 class="text-xl font-bold mb-2">中期项目开发</h5>
-                        <p class="text-gray-600">结合前期所学技能，完成从创意构思、设计建模、代码开发到实物制作的中期综合项目。</p>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute -left-9 md:-left-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white">
-                            <i class="fa fa-flag"></i>
-                        </div>
-                        <h5 class="text-xl font-bold mb-2">高阶创新与结课</h5>
-                        <p class="text-gray-600">运用设计思维和创新方法优化项目，参与创新创业实践，完成课程总结与项目汇报。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 中期项目 -->
-        <section id="mid-project" class="mb-24">
-            <h3 class="section-title">中期项目</h3>
-            <div class="bg-white rounded-xl shadow p-6 md:p-8 card-hover">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <div class="lg:w-1/2">
-                        <h4 class="text-2xl font-bold mb-4 flex items-center">
-                            <i class="fa fa-project-diagram text-primary mr-3"></i>项目名称：待定
-                        </h4>
-                        <p class="text-lg font-medium mb-2">项目理念：</p>
-                        <p class="text-gray-600 mb-4">结合创客教育的造物思维，基于<strong class="text-primary">嵌入式编程+3D设计+电子制作</strong>核心技能，打造一款解决实际生活/学习问题的智能硬件产品，实现从代码到实物的完整落地。</p>
-                        <p class="text-lg font-medium mb-2">开发周期：</p>
-                        <p class="text-gray-600 mb-4">XX天/周（从创意构思到实物成品）</p>
-                        <p class="text-lg font-medium mb-2">核心技能运用：</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">Fusion360 3D建模</span>
-                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">ESP32 嵌入式编程</span>
-                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">立创EDA 电路设计</span>
-                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">3D打印/激光切割</span>
-                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">Git 代码管理</span>
-                        </div>
-                        <p class="text-lg font-medium mb-2">项目难点与解决思路：</p>
-                        <p class="text-gray-600">1. 难点：XXX（如硬件与代码的联调、3D模型的精准打印）；解决思路：XXX<br>2. 难点：XXX（如电路布线的合理性、产品的实用性设计）；解决思路：XXX</p>
-                    </div>
-                    <div class="lg:w-1/2 space-y-4">
-                        <div class="rounded-lg overflow-hidden shadow h-48 md:h-60">
-                            <img src="https://picsum.photos/600/400?random=1" alt="项目设计图" class="w-full h-full object-cover">
-                            <p class="text-center py-2 text-sm text-gray-500">项目3D设计/电路设计图</p>
-                        </div>
-                        <div class="rounded-lg overflow-hidden shadow h-48 md:h-60">
-                            <img src="https://picsum.photos/600/400?random=2" alt="项目实物图" class="w-full h-full object-cover">
-                            <p class="text-center py-2 text-sm text-gray-500">项目实物成品/调试过程</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-8 pt-8 border-t border-gray-200">
-                    <h5 class="text-xl font-bold mb-4">项目功能展示</h5>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-light rounded-lg p-4 text-center">
-                            <i class="fa fa-bolt text-primary text-2xl mb-2"></i>
-                            <p class="font-medium">功能1</p>
-                            <p class="text-sm text-gray-600">XXX（如智能感应、自动控制）</p>
-                        </div>
-                        <div class="bg-light rounded-lg p-4 text-center">
-                            <i class="fa fa-wifi text-primary text-2xl mb-2"></i>
-                            <p class="font-medium">功能2</p>
-                            <p class="text-sm text-gray-600">XXX（如无线通信、手机互联）</p>
-                        </div>
-                        <div class="bg-light rounded-lg p-4 text-center">
-                            <i class="fa fa-cogs text-primary text-2xl mb-2"></i>
-                            <p class="font-medium">功能3</p>
-                            <p class="text-sm text-gray-600">XXX（如数据采集、状态显示）</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-center">
-                        <a href="https://gitee.com/outlier-assassin/code-to-physical.git" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all flex items-center">
-                            <i class="fa fa-github mr-2"></i> 项目代码仓库
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 课程总结 -->
-        <section id="course-summary">
-            <h3 class="section-title">课程总结</h3>
-            <div class="bg-white rounded-xl shadow p-6 md:p-8 card-hover">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-xl font-bold mb-4 flex items-center">
-                            <i class="fa fa-line-chart text-primary mr-3"></i>知识与技能收获
-                        </h4>
-                        <ul class="space-y-3 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
-                                <span>掌握了3D/2D设计、3D打印、数控切割等工程制造基础技能，能独立完成模型设计与实物加工。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
-                                <span>学会了ESP32嵌入式编程、电路板设计与电子焊接，实现了代码与硬件的结合，具备基础智能硬件开发能力。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
-                                <span>掌握了Git版本控制与团队协作方法，理解了创客项目从设计到落地的完整流程。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
-                                <span>建立了设计思维与创新意识，能运用共情、原型、测试的方法优化产品，结合TRIZ方法进行创意构思。</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-4 flex items-center">
-                            <i class="fa fa-reflecting text-primary mr-3"></i>学习感悟与反思
-                        </h4>
-                        <ul class="space-y-3 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-star text-secondary mt-1 mr-2"></i>
-                                <span>深刻理解了“我造物，故我在”的工程哲学，造物不仅是技能的实践，更是从创意到现实的思维落地，DIY精神是创客的核心。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-star text-secondary mt-1 mr-2"></i>
-                                <span>跨学科学习的重要性：创客项目融合了编程、机械、电子、设计等多领域知识，单一学科能力无法支撑完整的造物过程。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-exclamation-circle text-secondary mt-1 mr-2"></i>
-                                <span>自身不足：在硬件与代码联调的效率上仍有欠缺，产品的工业设计细节不够完善，后续需加强实操与设计练习。</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fa fa-forward text-secondary mt-1 mr-2"></i>
-                                <span>后续规划：继续优化中期项目，尝试结合深度学习等知识实现产品升级；参与Makerfaire等创客活动，交流学习更多创客经验。</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="mt-8 pt-8 border-t border-gray-200">
-                    <h4 class="text-xl font-bold mb-4 text-center">课程核心感悟</h4>
-                    <p class="text-lg text-gray-700 text-center max-w-4xl mx-auto italic">
-                        从代码到实物，不仅是技术的实践，更是<strong class="text-primary">创意的落地、思维的蜕变</strong>。创客教育教会我的不仅是造“物”的技能，更是造“梦”的能力——用双手将脑海中的创意变成现实，用造物的智慧去改善世界，这便是工科生的核心价值。
-                    </p>
-                    <div class="mt-6 flex justify-center">
-                        <img src="https://picsum.photos/1200/300?random=3" alt="创客教育理念图" class="rounded-lg shadow max-w-full w-3/4">
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="bg-dark text-white py-12 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-            <div class="flex justify-center items-center mb-6">
-                <i class="fa fa-cogs text-primary text-3xl mr-3"></i>
-                <h2 class="text-2xl font-bold">从代码到实物：造你所想</h2>
-            </div>
-            <p class="text-gray-400 mb-8">基于创客教育的造物之旅 | 我造物，故我在</p>
-            <div class="flex justify-center gap-6 text-xl mb-6">
-                <a href="#" class="text-gray-400 hover:text-primary transition-all"><i class="fa fa-github"></i></a>
-                <a href="#" class="text-gray-400 hover:text-primary transition-all"><i class="fa fa-gitee"></i></a>
-                <a href="#" class="text-gray-400 hover:text-primary transition-all"><i class="fa fa-wechat"></i></a>
-                <a href="#" class="text-gray-400 hover:text-primary transition-all"><i class="fa fa-email"></i></a>
-            </div>
-            <p class="text-gray-500 text-sm">© 2025 从代码到实物课程学习页 | 基于Tailwind CSS开发</p>
+  <main>
+    <section class="wrap" id="overview">
+      <div class="section-head">
+        <div>
+          <h2>课程进度总览</h2>
+          <p>仓库按照课程节奏逐步提交，每一节都尽量保留源文件、截图、模型或演示材料。</p>
         </div>
-    </footer>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>7</strong><span>已整理章节</span></div>
+        <div class="stat"><strong>1</strong><span>中期项目</span></div>
+        <div class="stat"><strong>2</strong><span>PCB 设计练习</span></div>
+        <div class="stat"><strong>1</strong><span>期末项目预留</span></div>
+      </div>
+    </section>
 
-    <!-- 回到顶部按钮 -->
-    <a href="#intro" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all z-40">
-        <i class="fa fa-arrow-up"></i>
-    </a>
+    <section class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>学习路径</h2>
+          <p>从软件记录和数字建模开始，逐步进入嵌入式、PCB 和数字制造。</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <article class="step">
+          <div class="num">01</div>
+          <h3>仓库与网页</h3>
+          <p>建立 Gitee 仓库，整理 README 与课程首页。</p>
+        </article>
+        <article class="step">
+          <div class="num">02-03</div>
+          <h3>3D 建模与打印</h3>
+          <p>完成手机支架建模、切片和实物打印。</p>
+        </article>
+        <article class="step">
+          <div class="num">04-05</div>
+          <h3>ESP32 实践</h3>
+          <p>完成 WiFi 控制舵机和墨水屏阅读器中期项目。</p>
+        </article>
+        <article class="step">
+          <div class="num">06-08</div>
+          <h3>制造与综合项目</h3>
+          <p>完成 PCB、激光切割，并预留期末项目入口。</p>
+        </article>
+      </div>
+    </section>
 
-    <script>
-        // 导航栏样式切换
-        const navLinks = document.querySelectorAll('nav ul li a');
-        const sections = document.querySelectorAll('main section');
+    <section class="wrap" id="works">
+      <div class="section-head">
+        <div>
+          <h2>作业作品</h2>
+          <p>下面是已完成的课程阶段成果，每张卡片都链接到对应素材或说明。</p>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="project">
+          <figure><img src="images/assignment1/网页截图.png" alt="第一次作业网页截图"></figure>
+          <div class="project-body">
+            <span class="tag">第一次作业</span>
+            <h3>Gitee 建仓与网页上传</h3>
+            <p>完成仓库创建、本地 Git 操作、README 框架和网页截图归档。</p>
+            <div class="links">
+              <a href="images/assignment1/本地git操作.png">Git 截图</a>
+              <a href="images/assignment1/网页截图.png">网页截图</a>
+            </div>
+          </div>
+        </article>
 
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (window.pageYOffset >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
-            });
+        <article class="project">
+          <figure><img src="images/assignment2/3d模型.png" alt="3D 手机支架模型"></figure>
+          <div class="project-body">
+            <span class="tag green">第二次作业</span>
+            <h3>3D 手机支架建模</h3>
+            <p>设计三角支撑结构，导出 STL 模型，为后续 3D 打印做准备。</p>
+            <div class="links">
+              <a href="fusion_models/assignment2/支架.stl">STL 模型</a>
+              <a href="images/assignment2/3d模型.png">模型截图</a>
+            </div>
+          </div>
+        </article>
 
-            navLinks.forEach(link => {
-                link.classList.remove('nav-active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('nav-active');
-                }
-            });
-        });
-    </script>
+        <article class="project">
+          <figure><img src="images/assignment3/3d成果展示.png" alt="3D 打印手机支架实物"></figure>
+          <div class="project-body">
+            <span class="tag green">第三次作业</span>
+            <h3>3D 打印手机支架</h3>
+            <p>完成切片预览和实物打印，测试手机支架的支撑效果。</p>
+            <div class="links">
+              <a href="images/assignment3/3d打印.png">切片预览</a>
+              <a href="images/assignment3/3d成果展示.png">成果图</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><video src="video/assignment4/wifi控制舵机演示视频.mp4" controls muted preload="metadata"></video></figure>
+          <div class="project-body">
+            <span class="tag green">第四次作业</span>
+            <h3>WiFi 控制舵机</h3>
+            <p>使用 ESP32 建立网络控制页面，通过 WiFi 指令调整舵机角度，并保留源码和演示视频。</p>
+            <div class="links">
+              <a href="code/assignment4/wifi控制舵机源码.txt">控制源码</a>
+              <a href="video/assignment4/wifi控制舵机演示视频.mp4">演示视频</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><img src="images/assignment5/拆卸后重组演示.jpg" alt="ESP32 墨水屏阅读器中期项目"></figure>
+          <div class="project-body">
+            <span class="tag green">中期项目</span>
+            <h3>ESP32 墨水屏阅读器</h3>
+            <p>结合 ESP32、墨水屏显示、阅读器源码和 3D 打印外壳，整理为课程中期综合项目。</p>
+            <div class="links">
+              <a href="code/assignment5/e-link墨水屏阅读器源码.txt">阅读器源码</a>
+              <a href="fusion_models/assignment5/盒子.stl">盒子 STL</a>
+              <a href="fusion_models/assignment5/盖子.stl">盖子 STL</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><img src="images/assignment6/2组装3d预览图.png" alt="TP4056 PCB 组装预览"></figure>
+          <div class="project-body">
+            <span class="tag amber">第六次作业</span>
+            <h3>EDA 与 PCB 设计</h3>
+            <p>完成校庆 LED 电子徽章和 TP4056 充电管理板复刻两项 PCB 练习。</p>
+            <div class="links">
+              <a href="images/assignment6/1电子徽章pcb图.png">徽章 PCB</a>
+              <a href="images/assignment6/2原理图.png">TP4056 原理图</a>
+              <a href="images/assignment6/2pcb图.png">TP4056 PCB</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><img src="images/assignment7/拼插演示图2.png" alt="激光切割拼插盒"></figure>
+          <div class="project-body">
+            <span class="tag amber">第七节</span>
+            <h3>激光切割拼插盒</h3>
+            <p>使用底板、长侧板和短侧板 DXF 文件切割并拼插成木质盒子。</p>
+            <div class="links">
+              <a href="laser_cutting/assignment7/底板.dxf">底板 DXF</a>
+              <a href="images/assignment7/拼插演示图1.png">俯视图</a>
+              <a href="images/assignment7/拼插演示图2.png">侧面图</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project empty-card" id="final">
+          <figure><div class="empty-visual">第八节 · 期末项目</div></figure>
+          <div class="project-body">
+            <span class="tag red">待补充</span>
+            <h3>期末项目预留</h3>
+            <p>这里预留给最终综合项目，后续可补充项目目标、设计过程、代码、模型、PCB、演示视频和总结。</p>
+            <div class="links">
+              <a href="README.md">等待更新</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="midterm">
+      <div class="section-head">
+        <div>
+          <h2>中期项目</h2>
+          <p>ESP32 墨水屏阅读器是课程中期综合项目，包含嵌入式程序、网页上传、墨水屏显示和 3D 外壳。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <article class="project">
+          <figure><img src="images/assignment5/拆卸后重组演示.jpg" alt="墨水屏阅读器重组展示"></figure>
+          <div class="project-body">
+            <span class="tag green">中期项目</span>
+            <h3>ESP32 墨水屏阅读器</h3>
+            <p>项目演示后已拆卸，仓库根据源码、外壳模型和重组展示图整理现有成果。</p>
+            <div class="links">
+              <a href="code/assignment5/e-link墨水屏阅读器源码.txt">源码</a>
+              <a href="fusion_models/assignment5/盒子.stl">盒子 STL</a>
+              <a href="fusion_models/assignment5/盖子.stl">盖子 STL</a>
+            </div>
+          </div>
+        </article>
+        <article class="project">
+          <figure><img src="images/assignment6/1电子徽章3d预览.png" alt="校庆电子徽章 3D 预览"></figure>
+          <div class="project-body">
+            <span class="tag amber">制造能力</span>
+            <h3>从电路到结构的综合练习</h3>
+            <p>课程材料覆盖网页、Git、3D 建模、3D 打印、ESP32、PCB 和激光切割，逐步形成完整的造物流程。</p>
+            <div class="links">
+              <a href="README.md">课程说明</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee 仓库</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="resources">
+      <div class="section-head">
+        <div>
+          <h2>资源入口</h2>
+          <p>常用目录集中在这里，方便老师检查源文件和成果图。</p>
+        </div>
+      </div>
+      <div class="resource-list">
+        <a href="README.md">README<span>完整文字说明</span></a>
+        <a href="code/">代码目录<span>ESP32 源码与练习</span></a>
+        <a href="fusion_models/">模型目录<span>STL 与 3D 外壳</span></a>
+        <a href="laser_cutting/">激光切割<span>DXF 切割文件</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">从代码到实物课程作品集 · 本页面由仓库素材整理生成 · 期末项目待补充</div>
+  </footer>
 </body>
 </html>
