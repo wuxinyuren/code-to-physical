@@ -1,26 +1,21 @@
-<!doctype html>
-<html lang="zh-CN" data-theme="blue">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>从代码到实物课程作品集</title>
   <style>
     :root {
-      --bg-top: #f7fbff;
-      --bg-bottom: #dbeeff;
-      --panel: rgba(255, 255, 255, 0.78);
-      --panel-strong: rgba(255, 255, 255, 0.92);
-      --text: #10233f;
-      --muted: #607693;
-      --line: rgba(37, 99, 235, 0.16);
-      --accent: #2563eb;
-      --accent-rgb: 37, 99, 235;
-      --accent-2: #38bdf8;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --paper: #f6f7f9;
+      --panel: #ffffff;
+      --blue: #2457a6;
       --green: #1f8a70;
-      --warm: #f59e0b;
+      --amber: #b45f06;
       --red: #b42318;
-      --shadow: 0 24px 70px rgba(37, 99, 235, 0.14);
-      --radius: 14px;
+      --shadow: 0 12px 32px rgba(23, 32, 42, 0.08);
     }
 
     * {
@@ -33,25 +28,10 @@
 
     body {
       margin: 0;
-      min-width: 320px;
-      overflow-x: hidden;
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 52%, #f8fbff 100%);
-      color: var(--text);
+      color: var(--ink);
+      background: var(--paper);
       font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
-      line-height: 1.72;
-    }
-
-    body::before {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      content: "";
-      background-image:
-        linear-gradient(rgba(var(--accent-rgb), 0.075) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(var(--accent-rgb), 0.075) 1px, transparent 1px);
-      background-size: 46px 46px;
-      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 86%);
+      line-height: 1.65;
     }
 
     a {
@@ -62,1083 +42,672 @@
     img,
     video {
       display: block;
-      max-width: 100%;
-    }
-
-    .aurora-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -3;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .aurora-bg span {
-      position: absolute;
-      width: 36vw;
-      height: 36vw;
-      min-width: 360px;
-      min-height: 360px;
-      border-radius: 999px;
-      filter: blur(34px);
-      opacity: 0.54;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-
-    .aurora-bg span:nth-child(1) {
-      top: -10vw;
-      left: 4vw;
-      background: rgba(var(--accent-rgb), 0.34);
-    }
-
-    .aurora-bg span:nth-child(2) {
-      top: 18vw;
-      right: -8vw;
-      background: rgba(56, 189, 248, 0.32);
-      animation-delay: -6s;
-    }
-
-    .aurora-bg span:nth-child(3) {
-      bottom: -10vw;
-      left: 26vw;
-      background: rgba(31, 138, 112, 0.24);
-      animation-delay: -11s;
-    }
-
-    @keyframes drift {
-      from {
-        transform: translate3d(-3vw, 2vh, 0) scale(0.95);
-      }
-
-      to {
-        transform: translate3d(5vw, -3vh, 0) scale(1.15);
-      }
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 64px;
       display: flex;
       align-items: center;
-      gap: 16px;
       justify-content: space-between;
-      padding: 12px clamp(14px, 4vw, 54px);
-      border-bottom: 1px solid var(--line);
-      background: rgba(247, 251, 255, 0.78);
-      backdrop-filter: blur(18px);
+      gap: 24px;
     }
 
     .brand {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .nav-links {
       display: flex;
-      flex: 0 0 auto;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand strong {
-      color: var(--text);
-      font-size: 17px;
-      font-weight: 950;
-    }
-
-    .brand small {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .project-nav {
-      display: flex;
-      flex: 1;
+      flex-wrap: wrap;
       gap: 8px;
       justify-content: flex-end;
-      overflow-x: auto;
-      padding: 2px 0 4px;
-      scrollbar-width: thin;
-    }
-
-    .project-nav a {
-      flex: 0 0 auto;
-      border: 1px solid rgba(var(--accent-rgb), 0.14);
-      border-radius: 999px;
-      padding: 8px 13px;
-      background: rgba(255, 255, 255, 0.56);
-      color: #315273;
       font-size: 14px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .project-nav a:hover,
-    .project-nav a.active {
-      border-color: rgba(var(--accent-rgb), 0.42);
-      background: rgba(var(--accent-rgb), 0.11);
-      color: var(--accent);
-    }
-
-    .reading-rail {
-      position: fixed;
-      top: 96px;
-      right: 20px;
-      z-index: 35;
-      width: 196px;
-    }
-
-    .rail-card,
-    .project-panel,
-    .student-card,
-    .glass-card,
-    .video-card,
-    .photo-card {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(20px);
-    }
-
-    .rail-card {
-      border-radius: var(--radius);
-      padding: 14px;
-    }
-
-    .rail-label,
-    .rail-subnav span {
-      display: block;
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
     }
 
-    .rail-card strong {
-      display: block;
-      margin: 3px 0 0;
-      color: var(--accent);
-      font-size: 18px;
-      line-height: 1.25;
+    .nav-links a {
+      padding: 8px 10px;
+      border-radius: 6px;
     }
 
-    .rail-card small {
-      display: block;
-      min-height: 18px;
-      margin: 2px 0 12px;
-      color: #3d6285;
-    }
-
-    .rail-track {
-      overflow: hidden;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(var(--accent-rgb), 0.12);
-    }
-
-    .rail-track span {
-      display: block;
-      width: 0%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition: width 160ms ease;
-    }
-
-    .rail-dots {
-      display: grid;
-      gap: 7px;
-      margin-top: 14px;
-    }
-
-    .rail-dots a {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .rail-dots b {
-      overflow: hidden;
-      font-weight: 800;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .rail-dots span {
-      flex: 0 0 auto;
-      width: 8px;
-      height: 8px;
-      border: 1px solid rgba(var(--accent-rgb), 0.38);
-      border-radius: 50%;
-    }
-
-    .rail-dots a.active {
-      color: var(--accent);
-    }
-
-    .rail-dots a.active span {
-      border-color: var(--accent);
-      background: var(--accent);
-      box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.55);
-    }
-
-    .rail-subnav {
-      margin-top: 14px;
-      border-top: 1px solid var(--line);
-      padding-top: 12px;
-    }
-
-    #subnavList {
-      display: grid;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    #subnavList a {
-      border-left: 2px solid rgba(var(--accent-rgb), 0.18);
-      padding-left: 8px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    #subnavList a.active {
-      border-left-color: var(--accent);
-      color: var(--accent);
-      font-weight: 900;
+    .nav-links a:hover {
+      background: #eef3fb;
+      color: var(--blue);
     }
 
     .hero {
+      background: linear-gradient(135deg, #0f2742 0%, #2457a6 56%, #1f8a70 100%);
+      color: #fff;
+      padding: 72px 0 64px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero-grid {
       display: grid;
-      min-height: calc(100vh - 70px);
-      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.58fr);
-      gap: clamp(28px, 6vw, 76px);
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 36px;
       align-items: center;
-      padding: clamp(74px, 10vw, 132px) clamp(18px, 16vw, 250px) clamp(64px, 8vw, 110px) clamp(18px, 6vw, 76px);
-    }
-
-    .hero-copy h1 {
-      max-width: 980px;
-      margin: 0;
-      color: #10233f;
-      font-size: clamp(42px, 7vw, 88px);
-      line-height: 1.03;
-      letter-spacing: 0;
-    }
-
-    .hero-copy p {
-      max-width: 760px;
-      color: #4d6684;
-      font-size: 18px;
-    }
-
-    .eyebrow,
-    .project-kicker {
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 950;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
     }
 
     .eyebrow {
       margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      font-weight: 700;
     }
 
-    .hero-actions,
-    .link-row,
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 18px;
     }
 
     .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-top: 28px;
     }
 
-    .button,
-    .link-row a,
-    .tag-row span {
+    .button {
       display: inline-flex;
-      min-height: 42px;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 8px 14px;
-      background: rgba(255, 255, 255, 0.64);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 900;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      font-weight: 700;
     }
 
     .button.primary {
-      border-color: var(--accent);
-      background: var(--accent);
+      background: #fff;
+      color: #143258;
+      border-color: #fff;
+    }
+
+    .button.secondary {
       color: #fff;
     }
 
-    .student-card {
-      display: grid;
-      gap: 16px;
-      border-radius: var(--radius);
-      padding: 24px;
+    .hero-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      padding: 18px;
     }
 
-    .student-card span {
-      color: var(--warm);
-      font-weight: 950;
+    .hero-card img {
+      aspect-ratio: 4 / 3;
+      border-radius: 6px;
     }
 
-    .student-card strong {
-      display: block;
-      margin-top: 4px;
-      font-size: 34px;
-      line-height: 1.1;
+    .hero-card p {
+      margin: 12px 0 0;
+      font-size: 14px;
     }
 
-    .student-card p {
-      margin: 4px 0 0;
-      color: var(--muted);
+    main {
+      padding: 56px 0 72px;
     }
 
-    .student-card dl {
-      display: grid;
-      gap: 10px;
-      margin: 0;
+    section {
+      margin-top: 56px;
     }
 
-    .student-card dl div {
-      border-top: 1px solid var(--line);
-      padding-top: 10px;
+    section:first-child {
+      margin-top: 0;
     }
 
-    .student-card dt {
-      color: var(--accent);
-      font-weight: 900;
-    }
-
-    .student-card dd {
-      margin: 0;
-      color: #4d6684;
-    }
-
-    .project-section {
-      display: grid;
-      grid-template-columns: 96px minmax(0, 1fr);
-      gap: clamp(18px, 4vw, 48px);
-      min-height: 100vh;
-      padding: clamp(66px, 8vw, 104px) clamp(18px, 16vw, 250px) clamp(66px, 8vw, 104px) clamp(18px, 6vw, 76px);
-      border-top: 1px solid rgba(var(--accent-rgb), 0.12);
-      scroll-margin-top: 82px;
-    }
-
-    .section-index {
-      position: sticky;
-      top: 100px;
-      align-self: start;
-      color: rgba(var(--accent-rgb), 0.32);
-      font-size: 64px;
-      font-weight: 950;
-      line-height: 1;
-    }
-
-    .project-panel {
-      position: relative;
-      overflow: hidden;
-      border-radius: var(--radius);
-      padding: clamp(22px, 4vw, 42px);
-      transform: translateY(18px);
-      opacity: 0;
-      transition: transform 420ms ease, opacity 420ms ease;
-    }
-
-    .project-section.active .project-panel,
-    .project-panel.revealed {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .project-panel::before {
-      position: absolute;
-      top: -80px;
-      right: -70px;
-      width: 240px;
-      height: 240px;
-      border-radius: 999px;
-      background: rgba(var(--accent-rgb), 0.1);
-      content: "";
-    }
-
-    .project-kicker {
+    .section-head {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 14px;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 20px;
     }
 
-    .project-kicker span {
-      border: 1px solid rgba(var(--accent-rgb), 0.24);
-      border-radius: 999px;
-      padding: 5px 10px;
-      background: rgba(var(--accent-rgb), 0.08);
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 36px);
+      line-height: 1.2;
     }
 
-    .project-kicker b {
+    .section-head p {
+      max-width: 620px;
+      margin: 8px 0 0;
       color: var(--muted);
     }
 
-    .project-head {
+    .stats {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 20px;
-      align-items: start;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
     }
 
-    .project-head h2 {
-      margin: 0;
-      color: #10233f;
-      font-size: clamp(34px, 5vw, 60px);
-      line-height: 1.08;
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
     }
 
-    .project-head p {
-      max-width: 920px;
-      margin: 14px 0 0;
-      color: #4d6684;
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .step {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .step .num {
+      color: var(--green);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .step h3 {
+      margin: 8px 0 6px;
       font-size: 17px;
     }
 
-    .status-chip {
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      border-radius: 999px;
-      padding: 8px 13px;
-      background: rgba(245, 158, 11, 0.12);
-      color: #b45309;
-      font-size: 13px;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .sub-section {
-      margin-top: 28px;
-      scroll-margin-top: 96px;
-    }
-
-    .project-grid,
-    .split-layout,
-    .card-row,
-    .media-showcase,
-    .resource-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    .project-grid,
-    .media-showcase {
-      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-    }
-
-    .split-layout {
-      grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
-    }
-
-    .card-row,
-    .resource-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .glass-card,
-    .video-card,
-    .photo-card {
-      overflow: hidden;
-      border-radius: var(--radius);
-    }
-
-    .glass-card {
-      padding: 20px;
-    }
-
-    .glass-card h3,
-    .resource-grid h3 {
-      margin: 0 0 10px;
-      color: #17365d;
-      font-size: 22px;
-    }
-
-    .glass-card p,
-    .glass-card li,
-    .resource-grid p,
-    .photo-card figcaption,
-    .video-card figcaption {
+    .step p {
+      margin: 0;
       color: var(--muted);
+      font-size: 14px;
     }
 
-    .glass-card ul {
-      margin: 10px 0 0;
-      padding-left: 20px;
-    }
-
-    .photo-card img {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      background: #dceeff;
-    }
-
-    .photo-card.large img {
-      min-height: 420px;
-    }
-
-    .photo-card figcaption,
-    .video-card figcaption {
-      padding: 11px 12px;
-    }
-
-    .video-card video {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #101828;
-    }
-
-    .video-card.featured video {
-      min-height: 320px;
-    }
-
-    .empty-showcase {
+    .grid {
       display: grid;
-      min-height: 260px;
-      place-content: center;
-      gap: 8px;
-      border: 1px dashed rgba(var(--accent-rgb), 0.35);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(90deg, rgba(var(--accent-rgb), 0.08) 1px, transparent 1px),
-        linear-gradient(rgba(var(--accent-rgb), 0.08) 1px, transparent 1px);
-      background-size: 24px 24px;
-      color: var(--muted);
-      text-align: center;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
     }
 
-    .empty-showcase strong {
-      color: var(--text);
-      font-size: 22px;
-    }
-
-    .resource-grid a {
-      display: block;
-      min-height: 150px;
+    .project {
+      background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px;
-      background: var(--panel-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
     }
 
-    .site-footer {
+    .project figure {
+      margin: 0;
+      background: #e9edf3;
+      aspect-ratio: 16 / 10;
+    }
+
+    .project-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .tag {
+      align-self: flex-start;
+      padding: 4px 8px;
+      border-radius: 5px;
+      background: #eef3fb;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.green {
+      background: #e8f5f1;
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: #fff4e5;
+      color: var(--amber);
+    }
+
+    .tag.red {
+      background: #fff0ee;
+      color: var(--red);
+    }
+
+    .project h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .project p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .links {
       display: flex;
       flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .links a {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .links a:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .feature .project figure {
+      aspect-ratio: 4 / 3;
+    }
+
+    .empty-card {
+      border: 1px dashed #a8b2c1;
+      background: #fbfcfe;
+      box-shadow: none;
+    }
+
+    .empty-visual {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      min-height: 220px;
+      color: #7a8596;
+      font-weight: 800;
+      background:
+        linear-gradient(90deg, rgba(36, 87, 166, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(36, 87, 166, 0.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      justify-content: space-between;
-      border-top: 1px solid var(--line);
-      padding: 26px clamp(18px, 6vw, 76px);
+    }
+
+    .resource-list a {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .resource-list span {
+      display: block;
+      margin-top: 6px;
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.66);
+      font-weight: 400;
+      font-size: 13px;
     }
 
-    .site-footer p {
-      margin: 0;
-    }
-
-    .site-footer a {
-      color: var(--accent);
-      font-weight: 900;
-    }
-
-    @media (max-width: 1240px) {
-      .reading-rail {
-        display: none;
-      }
-
-      .hero,
-      .project-section {
-        padding-right: clamp(18px, 6vw, 76px);
-      }
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      color: var(--muted);
+      background: #fff;
+      font-size: 14px;
     }
 
     @media (max-width: 960px) {
-      .site-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .project-nav {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .hero,
-      .project-section,
-      .project-grid,
-      .split-layout,
-      .card-row,
-      .media-showcase,
-      .resource-grid {
+      .hero-grid,
+      .feature {
         grid-template-columns: 1fr;
       }
 
-      .hero {
-        min-height: auto;
-      }
-
-      .project-section {
-        min-height: auto;
-        scroll-margin-top: 132px;
-      }
-
-      .section-index {
-        position: static;
-        font-size: 44px;
-      }
-
-      .project-head {
-        grid-template-columns: 1fr;
-      }
-
-      .video-card.featured video {
-        min-height: auto;
+      .stats,
+      .timeline,
+      .grid,
+      .resource-list {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
     @media (max-width: 640px) {
-      .hero-copy h1 {
-        font-size: 38px;
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
       }
 
-      .student-card strong {
-        font-size: 28px;
+      .nav-links {
+        justify-content: flex-start;
       }
 
-      .site-footer {
+      .hero {
+        padding: 44px 0;
+      }
+
+      .section-head {
         display: block;
+      }
+
+      .stats,
+      .timeline,
+      .grid,
+      .resource-list {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <div class="aurora-bg" aria-hidden="true">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="返回顶部">
-      <strong>从代码到实物</strong>
-      <small>课程项目作品集</small>
-    </a>
-    <nav class="project-nav" aria-label="课程章节导航">
-      <a href="#git" data-target="git">Gitee 建仓</a>
-      <a href="#model3d" data-target="model3d">3D 建模</a>
-      <a href="#print3d" data-target="print3d">3D 打印</a>
-      <a href="#embedded" data-target="embedded">WiFi 舵机</a>
-      <a href="#midterm" data-target="midterm">中期项目</a>
-      <a href="#pcb" data-target="pcb">EDA 与 PCB</a>
-      <a href="#laser" data-target="laser">激光切割</a>
-      <a href="#final" data-target="final">期末项目</a>
+    <nav class="nav">
+      <a class="brand" href="#top">从代码到实物</a>
+      <div class="nav-links" aria-label="页面导航">
+        <a href="#overview">总览</a>
+        <a href="#works">作业作品</a>
+        <a href="#midterm">中期项目</a>
+        <a href="#final">期末项目</a>
+        <a href="#resources">资源入口</a>
+      </div>
     </nav>
   </header>
 
-  <aside class="reading-rail" aria-label="当前浏览位置">
-    <div class="rail-card">
-      <span class="rail-label">当前项目</span>
-      <strong id="currentSection">课程首页</strong>
-      <small id="currentSubsection">学习记录总览</small>
-      <div class="rail-track"><span id="railFill"></span></div>
-      <div class="rail-dots" aria-label="项目进度">
-        <a href="#git" data-target="git"><span></span><b>Gitee 建仓</b></a>
-        <a href="#model3d" data-target="model3d"><span></span><b>3D 建模</b></a>
-        <a href="#print3d" data-target="print3d"><span></span><b>3D 打印</b></a>
-        <a href="#embedded" data-target="embedded"><span></span><b>WiFi 舵机</b></a>
-        <a href="#midterm" data-target="midterm"><span></span><b>中期项目</b></a>
-        <a href="#pcb" data-target="pcb"><span></span><b>EDA 与 PCB</b></a>
-        <a href="#laser" data-target="laser"><span></span><b>激光切割</b></a>
-        <a href="#final" data-target="final"><span></span><b>期末项目</b></a>
-      </div>
-      <div class="rail-subnav">
-        <span>项目内部</span>
-        <div id="subnavList"></div>
-      </div>
-    </div>
-  </aside>
-
-  <main id="top">
-    <section class="hero">
-      <div class="hero-copy">
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
         <p class="eyebrow">Gitee 课程作业仓库 · 2026</p>
         <h1>从网页、模型、硬件到实物作品的学习记录</h1>
-        <p>这个页面按照课程节奏整理每一次作业：先建立仓库和网页，再完成 3D 手机支架、ESP32 控制、墨水屏阅读器、PCB 设计和激光切割。页面采用课程博客式布局，视频放在网页播放器中，部署后可以直接点击播放。</p>
+        <p>这个页面汇总《从代码到实物》课程的阶段成果，包括 Gitee 建仓、3D 手机支架、ESP32 控制、墨水屏阅读器、EDA 与 PCB，以及激光切割拼插盒。页面素材使用远程链接，单独打开这个 HTML 也可以查看图片和资料。第八节期末项目已预留位置，后续继续补充。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#embedded">播放 WiFi 舵机视频</a>
-          <a class="button" href="https://gitee.com/outlier-assassin/code-to-physical">查看 Gitee 仓库</a>
+          <a class="button primary" href="#works">查看作品</a>
+          <a class="button secondary" href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">查看 README</a>
         </div>
       </div>
-      <aside class="student-card">
+      <div class="hero-card">
+        <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment5/拆卸后重组演示.jpg" alt="ESP32 墨水屏阅读器中期项目展示">
+        <p>中期项目：基于 ESP32 和墨水屏的简易电子书阅读器原型。</p>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="wrap" id="overview">
+      <div class="section-head">
         <div>
-          <span>Portfolio</span>
-          <strong>课程作品集</strong>
-          <p>用一个网页记录从代码到实物的完整过程。</p>
+          <h2>课程进度总览</h2>
+          <p>仓库按照课程节奏逐步提交，每一节都尽量保留源文件、截图、模型或演示材料。</p>
         </div>
-        <dl>
-          <div>
-            <dt>展示方式</dt>
-            <dd>动态课程博客、章节导航、内嵌视频播放器</dd>
-          </div>
-          <div>
-            <dt>当前状态</dt>
-            <dd>已完成第一至第七节，并预留期末项目位置</dd>
-          </div>
-        </dl>
-      </aside>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>7</strong><span>已整理章节</span></div>
+        <div class="stat"><strong>1</strong><span>中期项目</span></div>
+        <div class="stat"><strong>2</strong><span>PCB 设计练习</span></div>
+        <div class="stat"><strong>1</strong><span>期末项目预留</span></div>
+      </div>
     </section>
 
-    <section class="project-section" id="git" data-title="Gitee 建仓与网页上传">
-      <div class="section-index">01</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第一次作业</span><b>Git / Gitee / HTML</b></div>
-        <div class="project-head">
-          <div>
-            <h2>Gitee 建仓与网页上传</h2>
-            <p>完成课程仓库建立、本地操作记录、README 框架整理和网页上传，为后续所有作业提供统一入口。</p>
-          </div>
-          <span class="status-chip">已完成</span>
+    <section class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>学习路径</h2>
+          <p>从软件记录和数字建模开始，逐步进入嵌入式、PCB 和数字制造。</p>
         </div>
-        <div class="project-grid sub-section" id="git-proof" data-subtitle="过程截图">
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment1/本地git操作.png" alt="本地 Git 操作截图">
-            <figcaption>本地 Git 操作截图</figcaption>
-          </figure>
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment1/网页截图.png" alt="课程网页截图">
-            <figcaption>网页上传效果截图</figcaption>
-          </figure>
-        </div>
-      </article>
+      </div>
+      <div class="timeline">
+        <article class="step">
+          <div class="num">01</div>
+          <h3>仓库与网页</h3>
+          <p>建立 Gitee 仓库，整理 README 与课程首页。</p>
+        </article>
+        <article class="step">
+          <div class="num">02-03</div>
+          <h3>3D 建模与打印</h3>
+          <p>完成手机支架建模、切片和实物打印。</p>
+        </article>
+        <article class="step">
+          <div class="num">04-05</div>
+          <h3>ESP32 实践</h3>
+          <p>完成 WiFi 控制舵机和墨水屏阅读器中期项目。</p>
+        </article>
+        <article class="step">
+          <div class="num">06-08</div>
+          <h3>制造与综合项目</h3>
+          <p>完成 PCB、激光切割，并预留期末项目入口。</p>
+        </article>
+      </div>
     </section>
 
-    <section class="project-section" id="model3d" data-title="3D 手机支架建模">
-      <div class="section-index">02</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第二次作业</span><b>Fusion / STL / 结构设计</b></div>
-        <div class="project-head">
-          <div>
-            <h2>3D 手机支架建模</h2>
-            <p>第二次作业制作的是 3D 手机支架，重点是让支架具有稳定支撑角度，并导出可用于打印的 STL 文件。</p>
-          </div>
-          <span class="status-chip">已完成</span>
+    <section class="wrap" id="works">
+      <div class="section-head">
+        <div>
+          <h2>作业作品</h2>
+          <p>下面是已完成的课程阶段成果，每张卡片都链接到对应素材或说明。</p>
         </div>
-        <div class="split-layout sub-section" id="model3d-design" data-subtitle="模型设计">
-          <figure class="photo-card large">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment2/3d模型.png" alt="3D 手机支架模型">
-            <figcaption>3D 手机支架模型截图</figcaption>
-          </figure>
-          <div class="glass-card">
-            <h3>设计记录</h3>
-            <p>模型采用三角支撑思路，底部负责承重，后侧负责限制倾角，前端留出挡边防止手机滑落。</p>
-            <div class="link-row">
-              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment2/支架.stl">下载 STL 模型</a>
-              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment2/3d模型.png">查看模型截图</a>
+      </div>
+      <div class="grid">
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment1/网页截图.png" alt="第一次作业网页截图"></figure>
+          <div class="project-body">
+            <span class="tag">第一次作业</span>
+            <h3>Gitee 建仓与网页上传</h3>
+            <p>完成仓库创建、本地 Git 操作、README 框架和网页截图归档。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment1/本地git操作.png">Git 截图</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment1/网页截图.png">网页截图</a>
             </div>
           </div>
-        </div>
-      </article>
-    </section>
+        </article>
 
-    <section class="project-section" id="print3d" data-title="3D 打印手机支架">
-      <div class="section-index">03</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第三次作业</span><b>切片 / 打印 / 成果测试</b></div>
-        <div class="project-head">
-          <div>
-            <h2>3D 打印手机支架</h2>
-            <p>在完成建模后进行切片预览和实物打印，并检查手机支架的支撑效果。</p>
-          </div>
-          <span class="status-chip">已完成</span>
-        </div>
-        <div class="project-grid sub-section" id="print3d-result" data-subtitle="打印成果">
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment3/3d打印.png" alt="3D 打印切片预览">
-            <figcaption>切片预览</figcaption>
-          </figure>
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment3/3d成果展示.png" alt="3D 手机支架打印成果">
-            <figcaption>打印成果展示</figcaption>
-          </figure>
-        </div>
-      </article>
-    </section>
-
-    <section class="project-section" id="embedded" data-title="WiFi 控制舵机">
-      <div class="section-index">04</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第四次作业</span><b>ESP32 / WiFi / Servo</b></div>
-        <div class="project-head">
-          <div>
-            <h2>WiFi 控制舵机</h2>
-            <p>使用 ESP32 建立网络控制页面，通过 WiFi 指令调整舵机角度。演示视频已经放入网页播放器，可以直接点击播放，不需要先下载。</p>
-          </div>
-          <span class="status-chip">可直接播放</span>
-        </div>
-        <div class="media-showcase sub-section" id="embedded-video" data-subtitle="演示视频">
-          <figure class="video-card featured">
-            <video controls preload="metadata" playsinline>
-              <source src="video/assignment4/wifi控制舵机演示视频.mp4" type="video/mp4">
-              当前浏览器不支持视频播放。
-            </video>
-            <figcaption>WiFi 控制舵机演示视频，点击播放器中的播放按钮即可观看。</figcaption>
-          </figure>
-          <div class="glass-card">
-            <h3>实验说明</h3>
-            <p>这一次练习的重点是让 ESP32 通过 WiFi 提供控制入口，再把网页上的操作转换为舵机角度变化。</p>
-            <ul>
-              <li>ESP32 负责建立网络控制页面。</li>
-              <li>舵机根据网页指令改变角度。</li>
-              <li>源码和视频都保存在仓库中，方便复查。</li>
-            </ul>
-            <div class="link-row">
-              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/code/assignment4/wifi控制舵机源码.txt">查看控制源码</a>
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment2/3d模型.png" alt="3D 手机支架模型"></figure>
+          <div class="project-body">
+            <span class="tag green">第二次作业</span>
+            <h3>3D 手机支架建模</h3>
+            <p>设计三角支撑结构，导出 STL 模型，为后续 3D 打印做准备。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment2/支架.stl">STL 模型</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment2/3d模型.png">模型截图</a>
             </div>
           </div>
-        </div>
-      </article>
-    </section>
+        </article>
 
-    <section class="project-section" id="midterm" data-title="中期项目">
-      <div class="section-index">05</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>中期项目</span><b>ESP32 / 墨水屏 / 外壳</b></div>
-        <div class="project-head">
-          <div>
-            <h2>ESP32 墨水屏阅读器</h2>
-            <p>中期项目使用 ESP32 和墨水屏完成简易阅读器原型，同时设计了盒子和盖子的 3D 外壳。</p>
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment3/3d成果展示.png" alt="3D 打印手机支架实物"></figure>
+          <div class="project-body">
+            <span class="tag green">第三次作业</span>
+            <h3>3D 打印手机支架</h3>
+            <p>完成切片预览和实物打印，测试手机支架的支撑效果。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment3/3d打印.png">切片预览</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment3/3d成果展示.png">成果图</a>
+            </div>
           </div>
-          <span class="status-chip">已整理</span>
-        </div>
-        <div class="split-layout sub-section" id="midterm-showcase" data-subtitle="项目展示">
-          <figure class="photo-card large">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment5/拆卸后重组演示.jpg" alt="墨水屏阅读器拆卸后重组展示">
-            <figcaption>墨水屏阅读器拆卸后重组展示</figcaption>
-          </figure>
-          <div class="glass-card">
-            <h3>现有材料</h3>
-            <p>项目演示后已拆卸，因此仓库根据现有源码、两个外壳 STL 文件和重组展示图整理记录。</p>
-            <div class="link-row">
+        </article>
+
+        <article class="project">
+          <figure><video src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4" controls muted preload="metadata"></video></figure>
+          <div class="project-body">
+            <span class="tag green">第四次作业</span>
+            <h3>WiFi 控制舵机</h3>
+            <p>使用 ESP32 建立网络控制页面，通过 WiFi 指令调整舵机角度，并保留源码和演示视频。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/code/assignment4/wifi控制舵机源码.txt">控制源码</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment4/wifi控制舵机演示视频.mp4">演示视频</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment5/拆卸后重组演示.jpg" alt="ESP32 墨水屏阅读器中期项目"></figure>
+          <div class="project-body">
+            <span class="tag green">中期项目</span>
+            <h3>ESP32 墨水屏阅读器</h3>
+            <p>结合 ESP32、墨水屏显示、阅读器源码和 3D 打印外壳，整理为课程中期综合项目。</p>
+            <div class="links">
               <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/code/assignment5/e-link墨水屏阅读器源码.txt">阅读器源码</a>
               <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment5/盒子.stl">盒子 STL</a>
               <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment5/盖子.stl">盖子 STL</a>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
+
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/2组装3d预览图.png" alt="TP4056 PCB 组装预览"></figure>
+          <div class="project-body">
+            <span class="tag amber">第六次作业</span>
+            <h3>EDA 与 PCB 设计</h3>
+            <p>完成校庆 LED 电子徽章和 TP4056 充电管理板复刻两项 PCB 练习。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/1电子徽章pcb图.png">徽章 PCB</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/2原理图.png">TP4056 原理图</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/2pcb图.png">TP4056 PCB</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment7/拼插演示图2.png" alt="激光切割拼插盒"></figure>
+          <div class="project-body">
+            <span class="tag amber">第七节</span>
+            <h3>激光切割拼插盒</h3>
+            <p>使用底板、长侧板和短侧板 DXF 文件切割并拼插成木质盒子。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/laser_cutting/assignment7/底板.dxf">底板 DXF</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment7/拼插演示图1.png">俯视图</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment7/拼插演示图2.png">侧面图</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="project empty-card" id="final">
+          <figure><div class="empty-visual">第八节 · 期末项目</div></figure>
+          <div class="project-body">
+            <span class="tag red">待补充</span>
+            <h3>期末项目预留</h3>
+            <p>这里预留给最终综合项目，后续可补充项目目标、设计过程、代码、模型、PCB、演示视频和总结。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">等待更新</a>
+            </div>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <section class="project-section" id="pcb" data-title="EDA 与 PCB 设计">
-      <div class="section-index">06</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第六节</span><b>LED 徽章 / TP4056 / PCB</b></div>
-        <div class="project-head">
-          <div>
-            <h2>EDA 与 PCB 设计</h2>
-            <p>这一节包含两项练习：校庆 LED 电子徽章，以及 TP4056 充电管理板复刻。</p>
+    <section class="wrap" id="midterm">
+      <div class="section-head">
+        <div>
+          <h2>中期项目</h2>
+          <p>ESP32 墨水屏阅读器是课程中期综合项目，包含嵌入式程序、网页上传、墨水屏显示和 3D 外壳。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment5/拆卸后重组演示.jpg" alt="墨水屏阅读器重组展示"></figure>
+          <div class="project-body">
+            <span class="tag green">中期项目</span>
+            <h3>ESP32 墨水屏阅读器</h3>
+            <p>项目演示后已拆卸，仓库根据源码、外壳模型和重组展示图整理现有成果。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/code/assignment5/e-link墨水屏阅读器源码.txt">源码</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment5/盒子.stl">盒子 STL</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/fusion_models/assignment5/盖子.stl">盖子 STL</a>
+            </div>
           </div>
-          <span class="status-chip">已完成</span>
-        </div>
-        <div class="card-row sub-section" id="pcb-screens" data-subtitle="设计截图">
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/1电子徽章pcb图.png" alt="电子徽章 PCB 图">
-            <figcaption>电子徽章 PCB 图</figcaption>
-          </figure>
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/2原理图.png" alt="TP4056 原理图">
-            <figcaption>TP4056 原理图</figcaption>
-          </figure>
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/2组装3d预览图.png" alt="TP4056 组装 3D 预览">
-            <figcaption>TP4056 组装 3D 预览</figcaption>
-          </figure>
-        </div>
-      </article>
+        </article>
+        <article class="project">
+          <figure><img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment6/1电子徽章3d预览.png" alt="校庆电子徽章 3D 预览"></figure>
+          <div class="project-body">
+            <span class="tag amber">制造能力</span>
+            <h3>从电路到结构的综合练习</h3>
+            <p>课程材料覆盖网页、Git、3D 建模、3D 打印、ESP32、PCB 和激光切割，逐步形成完整的造物流程。</p>
+            <div class="links">
+              <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">课程说明</a>
+              <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee 仓库</a>
+            </div>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <section class="project-section" id="laser" data-title="激光切割拼插盒">
-      <div class="section-index">07</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第七节</span><b>DXF / 激光切割 / 拼插结构</b></div>
-        <div class="project-head">
-          <div>
-            <h2>激光切割拼插盒</h2>
-            <p>使用底板、长侧板和短侧板 DXF 文件完成拼插盒设计，并通过两张演示图记录装配效果。</p>
-          </div>
-          <span class="status-chip">已完成</span>
+    <section class="wrap" id="resources">
+      <div class="section-head">
+        <div>
+          <h2>资源入口</h2>
+          <p>常用目录集中在这里，方便老师检查源文件和成果图。</p>
         </div>
-        <div class="project-grid sub-section" id="laser-result" data-subtitle="拼插展示">
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment7/拼插演示图1.png" alt="激光切割拼插盒俯视图">
-            <figcaption>拼插演示图 1</figcaption>
-          </figure>
-          <figure class="photo-card">
-            <img src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment7/拼插演示图2.png" alt="激光切割拼插盒侧面图">
-            <figcaption>拼插演示图 2</figcaption>
-          </figure>
-        </div>
-        <div class="link-row sub-section" id="laser-files" data-subtitle="切割文件">
-          <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/laser_cutting/assignment7/底板.dxf">底板 DXF</a>
-          <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/laser_cutting/assignment7">查看全部切割文件</a>
-        </div>
-      </article>
-    </section>
-
-    <section class="project-section" id="final" data-title="期末项目">
-      <div class="section-index">08</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>第八节</span><b>Final Project</b></div>
-        <div class="project-head">
-          <div>
-            <h2>期末项目预留</h2>
-            <p>这里预留给最终综合项目，后续可继续补充项目目标、设计过程、代码、模型、PCB、演示视频和总结。</p>
-          </div>
-          <span class="status-chip">待补充</span>
-        </div>
-        <div class="empty-showcase sub-section" id="final-placeholder" data-subtitle="预留位置">
-          <strong>第八节 · 期末项目</strong>
-          <span>等待加入最终作品材料</span>
-        </div>
-      </article>
-    </section>
-
-    <section class="project-section" id="resources" data-title="资源入口">
-      <div class="section-index">R</div>
-      <article class="project-panel">
-        <div class="project-kicker"><span>Resources</span><b>仓库材料入口</b></div>
-        <div class="project-head">
-          <div>
-            <h2>资源入口</h2>
-            <p>常用材料集中在这里，方便检查源码、图片、模型和切割文件。</p>
-          </div>
-        </div>
-        <div class="resource-grid sub-section" id="resource-links" data-subtitle="常用链接">
-          <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">
-            <h3>README</h3>
-            <p>完整文字说明和每节作业记录。</p>
-          </a>
-          <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/code">
-            <h3>代码目录</h3>
-            <p>ESP32 控制源码和中期项目源码。</p>
-          </a>
-          <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/fusion_models">
-            <h3>模型目录</h3>
-            <p>手机支架、阅读器外壳等 STL 文件。</p>
-          </a>
-        </div>
-      </article>
+      </div>
+      <div class="resource-list">
+        <a href="https://gitee.com/outlier-assassin/code-to-physical/blob/master/README.md">README<span>完整文字说明</span></a>
+        <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/code">代码目录<span>ESP32 源码与练习</span></a>
+        <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/fusion_models">模型目录<span>STL 与 3D 外壳</span></a>
+        <a href="https://gitee.com/outlier-assassin/code-to-physical/tree/master/laser_cutting">激光切割<span>DXF 切割文件</span></a>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>从代码到实物课程作品集 · 静态网页 + CSS 动画 + JavaScript 滚动交互</p>
-    <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee 仓库</a>
+  <footer>
+    <div class="wrap">从代码到实物课程作品集 · 本页面由仓库素材整理生成 · 期末项目待补充</div>
   </footer>
-
-  <script>
-    const sections = [...document.querySelectorAll(".project-section")];
-    const navLinks = [...document.querySelectorAll("[data-target]")];
-    const currentSection = document.querySelector("#currentSection");
-    const currentSubsection = document.querySelector("#currentSubsection");
-    const railFill = document.querySelector("#railFill");
-    const subnavList = document.querySelector("#subnavList");
-
-    let activeSectionId = "";
-    let activeSubsectionId = "";
-
-    function getActiveSubsection(section) {
-      const subsections = [...section.querySelectorAll(".sub-section")];
-      if (!subsections.length) return "";
-
-      const marker = window.innerHeight * 0.42;
-      let active = subsections[0];
-
-      for (const subsection of subsections) {
-        const rect = subsection.getBoundingClientRect();
-        if (rect.top <= marker) {
-          active = subsection;
-        }
-      }
-
-      return active.id;
-    }
-
-    function buildSubnav(section, activeSubId) {
-      const subsections = [...section.querySelectorAll(".sub-section")];
-      subnavList.innerHTML = subsections.map((subsection) => {
-        const title = subsection.dataset.subtitle || subsection.id;
-        const active = subsection.id === activeSubId ? "active" : "";
-        return `<a class="${active}" href="#${subsection.id}">${title}</a>`;
-      }).join("");
-    }
-
-    function setActive(sectionId, subSectionId, force = false) {
-      const active = sections.find((section) => section.id === sectionId);
-      if (!active) return;
-
-      const subsection = active.querySelector(`#${CSS.escape(subSectionId)}`) || active.querySelector(".sub-section");
-      const resolvedSubId = subsection?.id || "";
-
-      if (!force && activeSectionId === sectionId && activeSubsectionId === resolvedSubId) return;
-
-      activeSectionId = sectionId;
-      activeSubsectionId = resolvedSubId;
-      currentSection.textContent = active.dataset.title || sectionId;
-      currentSubsection.textContent = subsection?.dataset.subtitle || "";
-
-      navLinks.forEach((link) => {
-        link.classList.toggle("active", link.dataset.target === sectionId);
-      });
-
-      sections.forEach((section) => {
-        section.classList.toggle("active", section.id === sectionId);
-      });
-
-      const index = sections.findIndex((section) => section.id === sectionId);
-      const progress = sections.length > 1 ? (index / (sections.length - 1)) * 100 : 100;
-      railFill.style.width = `${progress}%`;
-      buildSubnav(active, resolvedSubId);
-    }
-
-    function updateActiveSection(force = false) {
-      const marker = window.innerHeight * 0.35;
-      let active = sections[0];
-
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= marker) {
-          active = section;
-        }
-      }
-
-      if (!active) return;
-      setActive(active.id, getActiveSubsection(active), force);
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed");
-        }
-      });
-    }, { threshold: 0.18 });
-
-    document.querySelectorAll(".project-panel").forEach((panel) => observer.observe(panel));
-    updateActiveSection(true);
-    window.addEventListener("scroll", () => updateActiveSection(), { passive: true });
-    window.addEventListener("resize", () => updateActiveSection(true));
-  </script>
 </body>
 </html>
