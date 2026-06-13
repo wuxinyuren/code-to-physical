@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="张文豪的期末项目开发日志 - 弱光压力触发智能灯带装置">
-  <meta name="keywords" content="从代码到实物,期末项目,Arduino,WS2812,FSR,光敏传感器,3D打印">
+  <meta name="description" content="张文豪的期末项目开发日志 - 宿舍熄灯后下床夜间感应LED灯">
+  <meta name="keywords" content="从代码到实物,期末项目,Arduino,传感器,LED,FSR,3D打印">
   <title>期末项目开发日志 · 张文豪</title>
   <style>
     * {
@@ -19,9 +19,9 @@
 
     body {
       min-height: 100vh;
-      color: #182539;
-      background: linear-gradient(135deg, #f4f8fb 0%, #e6edf2 100%);
-      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      color: #1e2b3c;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
       line-height: 1.8;
     }
 
@@ -39,34 +39,33 @@
     .navbar {
       position: sticky;
       top: 0;
-      z-index: 20;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(31, 90, 140, 0.1);
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: 0 4px 20px rgba(24, 37, 57, 0.08);
+      z-index: 100;
+      padding: 19px 0;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       backdrop-filter: blur(10px);
-      transition: padding 0.2s ease, box-shadow 0.2s ease;
+      transition: padding 0.25s ease, box-shadow 0.25s ease;
     }
 
     .navbar.scrolled {
-      padding: 12px 0;
-      box-shadow: 0 2px 14px rgba(24, 37, 57, 0.12);
+      padding: 13px 0;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     }
 
     .navbar-inner {
       display: flex;
-      max-width: 1120px;
+      max-width: 1100px;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 24px;
       margin: 0 auto;
-      padding: 0 22px;
+      padding: 0 32px;
     }
 
     .logo {
-      color: #1766a6;
-      font-size: 22px;
-      font-weight: 900;
+      color: #0077ff;
+      font-size: 25px;
+      font-weight: 800;
       white-space: nowrap;
     }
 
@@ -74,290 +73,310 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 10px;
       list-style: none;
     }
 
     .navbar a:not(.logo) {
       display: inline-flex;
-      border-radius: 8px;
-      padding: 7px 10px;
+      border-radius: 6px;
+      padding: 8px 12px;
       color: #2c3e50;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .navbar a:not(.logo):hover {
-      background: rgba(23, 102, 166, 0.08);
-      color: #1766a6;
+      background: rgba(0, 119, 255, 0.06);
+      color: #0077ff;
     }
 
     .container {
-      max-width: 1120px;
-      margin: 42px auto;
-      padding: 0 22px;
+      max-width: 1100px;
+      margin: 48px auto;
+      padding: 0 32px;
     }
 
     .header-section {
-      position: relative;
-      overflow: hidden;
       border-radius: 24px;
-      padding: clamp(42px, 8vw, 76px) clamp(24px, 5vw, 52px);
+      padding: 56px 40px;
       color: #fff;
-      background: #163752;
-      box-shadow: 0 24px 52px rgba(23, 102, 166, 0.24);
-    }
-
-    .header-section::before {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: linear-gradient(rgba(15, 39, 66, 0.18), rgba(15, 39, 66, 0.72));
-      content: "";
-    }
-
-    .header-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
     }
 
     .header-section h1 {
-      position: relative;
-      z-index: 2;
-      max-width: 840px;
-      font-size: clamp(34px, 6vw, 68px);
-      line-height: 1.08;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.18;
       letter-spacing: 0;
     }
 
     .subtitle {
-      position: relative;
-      z-index: 2;
-      max-width: 720px;
       margin-top: 18px;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
+      font-size: 20px;
     }
 
     .section {
-      margin-top: 34px;
+      margin-top: 40px;
       border-radius: 20px;
-      padding: clamp(24px, 4vw, 42px);
+      padding: clamp(28px, 4vw, 42px);
       background: #fff;
-      box-shadow: 0 12px 34px rgba(24, 37, 57, 0.07);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     }
 
     .section h2 {
-      margin-bottom: 22px;
-      border-left: 6px solid #1766a6;
-      padding-left: 14px;
-      color: #0b1f33;
-      font-size: clamp(25px, 4vw, 34px);
+      margin-bottom: 30px;
+      border-left: 6px solid #0077ff;
+      padding-left: 18px;
+      color: #0a1929;
+      font-size: clamp(28px, 4vw, 38px);
       line-height: 1.25;
     }
 
-    .card {
-      border: 1px solid rgba(23, 102, 166, 0.1);
+    .panel {
       border-radius: 16px;
-      padding: 22px;
-      background: linear-gradient(135deg, #f9fcff 0%, #f0f7ff 100%);
+      padding: 28px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
-    .card h3 {
-      margin-bottom: 10px;
-      color: #0b1f33;
-      font-size: 23px;
+    .panel h3 {
+      margin-bottom: 14px;
+      color: #0a1929;
+      font-size: 24px;
     }
 
-    .card p,
-    .card li {
+    .panel p,
+    .panel li,
+    .team-card p,
+    .file-list li {
       color: #334e68;
       font-size: 16px;
     }
 
-    .card ul {
-      margin: 10px 0 0 20px;
+    .panel ul,
+    .problem ul,
+    .solution ul {
+      margin: 12px 0 0 24px;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 20px;
+      align-items: start;
     }
 
     .project-img {
       width: 100%;
       margin-top: 18px;
       border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.12);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       cursor: zoom-in;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .project-img:hover {
-      transform: scale(1.01);
-      box-shadow: 0 12px 32px rgba(24, 37, 57, 0.18);
-    }
-
-    .media-grid,
-    .team-grid,
-    .file-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .media-grid {
-      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-      align-items: stretch;
-    }
-
-    .team-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .team-card {
-      border-radius: 14px;
-      padding: 18px;
-      background: #fff;
-      box-shadow: 0 6px 18px rgba(24, 37, 57, 0.08);
-    }
-
-    .team-card h4 {
-      margin-bottom: 8px;
-      color: #1766a6;
-      font-size: 18px;
+      transform: scale(1.015);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .video-box {
       overflow: hidden;
-      border: 1px solid rgba(23, 102, 166, 0.12);
       border-radius: 16px;
       background: #fff;
-      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     .video-box video {
       width: 100%;
       aspect-ratio: 16 / 9;
-      background: #101828;
+      background: #111827;
     }
 
     .video-status {
-      padding: 11px 14px;
-      color: #607693;
+      padding: 12px 16px;
+      color: #5e6f8d;
       font-size: 14px;
+    }
+
+    .team-wrap {
+      border-left: 4px solid #0077ff;
+      border-radius: 18px;
+      padding: 32px;
+      background: linear-gradient(135deg, #f8fafd 0%, #e3f2fd 100%);
+    }
+
+    .team-wrap h3 {
+      color: #0077ff;
+      font-size: 24px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .team-card {
+      border-radius: 12px;
+      padding: 24px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .team-card h4 {
+      margin-bottom: 12px;
+      color: #0a1929;
+      font-size: 20px;
     }
 
     .timeline {
       position: relative;
-      padding: 8px 0;
+      padding: 14px 0;
     }
 
     .timeline::before {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 46px;
+      left: 50px;
       width: 4px;
       border-radius: 2px;
-      background: linear-gradient(180deg, #1766a6, #1f8a70);
+      background: linear-gradient(180deg, #0077ff, #00c6ff);
       content: "";
     }
 
     .timeline-item {
       position: relative;
-      margin-bottom: 28px;
-      padding-left: 92px;
+      margin-bottom: 48px;
+      padding-left: 100px;
     }
 
     .timeline-item::before {
       position: absolute;
-      top: 9px;
-      left: 34px;
-      width: 26px;
-      height: 26px;
-      border: 4px solid #1766a6;
+      top: 10px;
+      left: 38px;
+      z-index: 1;
+      width: 28px;
+      height: 28px;
+      border: 4px solid #0077ff;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 4px 12px rgba(23, 102, 166, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 119, 255, 0.3);
       content: "";
     }
 
     .timeline-card {
       border-radius: 16px;
-      padding: 22px;
+      padding: 32px;
       background: #fff;
-      box-shadow: 0 8px 24px rgba(24, 37, 57, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .timeline-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     }
 
     .date {
       display: inline-block;
-      margin-bottom: 12px;
-      border-radius: 999px;
-      padding: 4px 12px;
+      margin-bottom: 16px;
+      border-radius: 20px;
+      padding: 5px 16px;
       color: #fff;
-      background: linear-gradient(135deg, #1766a6, #1f8a70);
-      font-size: 13px;
+      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      font-size: 14px;
       font-weight: 800;
+    }
+
+    .timeline-card h3 {
+      margin-bottom: 16px;
+      color: #0a1929;
+      font-size: 25px;
     }
 
     .problem {
       border-radius: 16px;
-      padding: 22px;
-      background: linear-gradient(135deg, #fff4e5 0%, #ffe0cc 100%);
+      padding: 30px;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    }
+
+    .problem h3 {
+      color: #d63031;
+      font-size: 23px;
     }
 
     .solution {
-      margin-top: 18px;
+      margin-top: 24px;
       border-radius: 16px;
-      padding: 22px;
-      background: linear-gradient(135deg, #e8f5f1 0%, #d6f3df 100%);
+      padding: 30px;
+      background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+    }
+
+    .solution h3 {
+      color: #198754;
+      font-size: 23px;
     }
 
     .file-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
       list-style: none;
+      border: 1px solid rgba(0, 119, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #f9fcff 0%, #f0f7ff 100%);
     }
 
     .file-list li {
-      border: 1px solid rgba(23, 102, 166, 0.1);
-      border-radius: 12px;
-      padding: 15px;
-      background: #f9fcff;
-      color: #334e68;
+      border-radius: 10px;
+      padding: 10px 16px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
 
     .file-list a {
-      color: #1766a6;
+      color: #0077ff;
       font-weight: 800;
     }
 
     footer {
-      margin: 36px 0 0;
-      border-radius: 18px;
-      padding: 24px;
-      background: rgba(255, 255, 255, 0.72);
-      color: #607693;
+      margin: 48px 0 0;
+      border-radius: 20px;
+      padding: 32px;
+      background: rgba(255, 255, 255, 0.7);
+      color: #5e6f8d;
       text-align: center;
+      backdrop-filter: blur(10px);
     }
 
     footer a {
-      color: #1766a6;
+      color: #0077ff;
       font-weight: 800;
     }
 
     .back-to-top {
       position: fixed;
-      right: 24px;
-      bottom: 24px;
-      width: 46px;
-      height: 46px;
+      right: 30px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
       border: 0;
       border-radius: 50%;
-      background: linear-gradient(135deg, #1766a6, #1f8a70);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #fff;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 22px;
       opacity: 0;
-      box-shadow: 0 8px 24px rgba(23, 102, 166, 0.3);
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     .back-to-top.visible {
@@ -368,32 +387,42 @@
       transform: translateY(-3px);
     }
 
-    @media (max-width: 860px) {
+    @media (max-width: 820px) {
       .navbar-inner {
         align-items: flex-start;
         flex-direction: column;
+        padding: 0 18px;
       }
 
       .navbar ul {
         justify-content: flex-start;
       }
 
-      .media-grid,
-      .team-grid,
-      .file-list {
+      .container {
+        margin: 32px auto;
+        padding: 0 18px;
+      }
+
+      .header-section {
+        padding: 42px 22px;
+      }
+
+      .overview-grid {
         grid-template-columns: 1fr;
       }
 
       .timeline::before {
-        left: 24px;
+        left: 30px;
       }
 
       .timeline-item {
-        padding-left: 62px;
+        padding-left: 70px;
       }
 
       .timeline-item::before {
-        left: 12px;
+        left: 18px;
+        width: 24px;
+        height: 24px;
       }
     }
   </style>
@@ -401,13 +430,13 @@
 <body>
   <nav class="navbar">
     <div class="navbar-inner">
-      <a href="#top" class="logo">期末项目开发日志</a>
+      <a href="#top" class="logo">开发日志</a>
       <ul>
         <li><a href="index.html">返回主页</a></li>
         <li><a href="#overview">项目概述</a></li>
         <li><a href="#team">团队信息</a></li>
         <li><a href="#timeline">开发历程</a></li>
-        <li><a href="#failures">问题解决</a></li>
+        <li><a href="#failures">问题与解决</a></li>
         <li><a href="#resources">资源文件</a></li>
       </ul>
     </div>
@@ -415,18 +444,16 @@
 
   <main class="container" id="top">
     <section class="header-section">
-      <img class="header-bg" src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="">
-      <h1>弱光压力触发智能灯带装置</h1>
-      <p class="subtitle">张文豪 · 期末项目开发日志 · 光敏传感器 + FSR 压力传感器 + WS2812 灯带 + 3D 打印外壳</p>
+      <h1>宿舍熄灯后下床夜间感应LED灯</h1>
+      <p class="subtitle">期末项目开发日志 · 张文豪 · 2026年6月</p>
     </section>
 
     <section class="section" id="overview">
       <h2>项目概述</h2>
-      <div class="media-grid">
-        <div class="card">
+      <div class="overview-grid">
+        <div class="panel">
           <h3>项目简介</h3>
-          <p>本项目完成的是一个弱光压力触发智能灯带装置。系统通过光敏传感器判断环境亮度，在弱光或黑暗环境中进入可触发状态；当 FSR 薄膜压力传感器检测到较大压力时，WS2812 灯带点亮为暖橙色，方便夜间照明。</p>
-          <p>灯带点亮后，再次触发压力传感器可以关闭；如果 30 秒内没有操作，程序会自动熄灭灯带，避免长时间亮灯。</p>
+          <p>本项目利用光线传感器和 FSR 薄膜压力传感器，设计了一款智能夜间感应 LED 灯。系统通过光线传感器判断环境亮度，在宿舍熄灯后自动进入待机状态；当检测到有人下床踩踏 FSR 传感器时，自动点亮 LED 灯，方便夜间行走，避免打扰室友休息。</p>
           <img class="project-img" src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目实物图">
         </div>
         <div class="video-box">
@@ -440,24 +467,35 @@
     </section>
 
     <section class="section" id="team">
-      <h2>团队信息</h2>
-      <div class="team-grid">
-        <div class="team-card">
-          <h4>张文豪</h4>
-          <p><strong>角色：</strong>硬件连接与网页整理</p>
-          <p><strong>任务：</strong>整理传感器、灯带、代码、图片和演示材料，并完成个人仓库展示。</p>
-        </div>
-        <div class="team-card">
-          <h4>结构制造</h4>
-          <p><strong>内容：</strong>盒子、盖子和梯子结构 3D 打印。</p>
-        </div>
-        <div class="team-card">
-          <h4>嵌入式控制</h4>
-          <p><strong>内容：</strong>读取光敏和压力传感器，控制 WS2812 灯带。</p>
-        </div>
-        <div class="team-card">
-          <h4>测试展示</h4>
-          <p><strong>内容：</strong>完成阈值调试、实物测试和视频演示。</p>
+      <h2>设计思维 周五EM 第四组</h2>
+      <div class="team-wrap">
+        <h3>团队成员</h3>
+        <div class="team-grid">
+          <div class="team-card">
+            <h4>吕豪</h4>
+            <p><strong>角色：</strong>项目协调 / 集成</p>
+            <p><strong>主要任务：</strong>成员分工、监督以及最后的成果汇总</p>
+          </div>
+          <div class="team-card">
+            <h4>张文豪</h4>
+            <p><strong>角色：</strong>硬件与电路</p>
+            <p><strong>主要任务：</strong>完成传感器、电路焊接和连接</p>
+          </div>
+          <div class="team-card">
+            <h4>冯国豪</h4>
+            <p><strong>角色：</strong>程序与嵌入式</p>
+            <p><strong>主要任务：</strong>撰写相关代码，完成功能的实现</p>
+          </div>
+          <div class="team-card">
+            <h4>陈家兴</h4>
+            <p><strong>角色：</strong>结构与制造</p>
+            <p><strong>主要任务：</strong>材料选型、3D打印、部件组装、安装结构、灯带布线</p>
+          </div>
+          <div class="team-card">
+            <h4>于博涵</h4>
+            <p><strong>角色：</strong>展示与测试</p>
+            <p><strong>主要任务：</strong>汇报成果的应用场景、成果的意义、成果展示和原理解释</p>
+          </div>
         </div>
       </div>
     </section>
@@ -467,39 +505,71 @@
       <div class="timeline">
         <div class="timeline-item">
           <div class="timeline-card">
-            <span class="date">方案确定</span>
-            <h3>确定夜间感应灯带方向</h3>
-            <p>围绕“弱光环境下自动或半自动照明”的需求，确定使用光敏传感器判断环境亮度，使用 FSR 压力传感器作为触发输入。</p>
+            <span class="date">6月12日 15:00</span>
+            <h3>项目启动与方案设计</h3>
+            <p>参与 Hackathon 活动，确定项目主题和技术方案。</p>
+            <ul>
+              <li>确定使用 Arduino 作为主控平台</li>
+              <li>选择光线传感器和 FSR 压力传感器</li>
+              <li>设计 3D 打印外壳方案</li>
+            </ul>
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-card">
-            <span class="date">硬件搭建</span>
-            <h3>连接传感器和 WS2812 灯带</h3>
-            <p>将 WS2812 灯带数据引脚连接到 GPIO18，光敏传感器连接到 GPIO4，FSR 压力传感器连接到 GPIO5，通过串口观察读数变化。</p>
-            <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="硬件调试过程图">
+            <span class="date">6月12日 16:30</span>
+            <h3>硬件组装与电路搭建</h3>
+            <p>开始硬件部分的组装工作。</p>
+            <ul>
+              <li>连接 Arduino 主板</li>
+              <li>搭建光线传感器电路</li>
+              <li>连接 FSR 薄膜压力传感器</li>
+              <li>焊接 LED 灯模块</li>
+            </ul>
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-card">
-            <span class="date">程序调试</span>
-            <h3>编写判断逻辑和自动熄灭功能</h3>
-            <p>程序根据亮度阈值判断是否处于弱光环境，再根据压力阈值触发灯带开关；灯带点亮后记录时间，超过 30 秒自动关闭。</p>
+            <span class="date">6月12日 18:00</span>
+            <h3>软件开发与调试</h3>
+            <p>编写 Arduino 程序代码，完成传感器读取和 LED 控制逻辑。</p>
+            <ul>
+              <li>实现光线传感器数据读取</li>
+              <li>开发 FSR 压力检测逻辑</li>
+              <li>编写 LED 灯控制算法</li>
+              <li>测试程序功能</li>
+            </ul>
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-card">
-            <span class="date">结构装配</span>
-            <h3>完成 3D 打印外壳组合</h3>
-            <p>使用盒子、盖子和梯子结构组合成最终外观，并考虑灯带、传感器和线路的摆放位置。</p>
-            <img class="project-img" src="images/assignment8/期末项目完成过程图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图.jpg" alt="结构装配过程图">
+            <span class="date">6月13日 9:00</span>
+            <h3>3D打印与结构优化</h3>
+            <p>完成外壳的 3D 打印和结构组装。</p>
+            <ul>
+              <li>打印盒子主体结构</li>
+              <li>打印盖子部件</li>
+              <li>组装所有零部件</li>
+              <li>优化传感器布局</li>
+            </ul>
+            <img class="project-img" src="images/assignment8/期末项目完成过程图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图.jpg" alt="开发过程图">
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-card">
-            <span class="date">最终展示</span>
-            <h3>完成实物和视频记录</h3>
-            <p>最终作品能够在弱光状态下响应压力输入，点亮暖色灯带，并保留代码、模型、图片和演示视频作为期末提交材料。</p>
+            <span class="date">6月13日 14:00</span>
+            <h3>最终测试与优化</h3>
+            <p>进行完整的系统测试和功能优化。</p>
+            <ul>
+              <li>测试光线感应灵敏度</li>
+              <li>调整 FSR 压力阈值</li>
+              <li>优化 LED 亮度控制</li>
+              <li>录制功能演示视频</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -509,37 +579,45 @@
       <h2>问题与解决</h2>
       <div class="problem">
         <h3>遇到的问题</h3>
+        <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="开发失败图">
         <ul>
-          <li><strong>传感器阈值不稳定：</strong>光敏和压力传感器在不同环境下读数变化明显，需要根据实际测试重新设定阈值。</li>
-          <li><strong>灯带调试复杂：</strong>WS2812 对数据引脚、供电和库函数配置比较敏感，初期需要反复确认接线和灯珠数量。</li>
-          <li><strong>结构装配限制：</strong>外壳空间有限，线路、传感器和灯带位置需要在实物中重新调整。</li>
+          <li><strong>FSR传感器灵敏度不足：</strong>踩踏时检测不够灵敏。</li>
+          <li><strong>光线传感器阈值设定困难：</strong>不同环境下差异较大。</li>
+          <li><strong>LED灯的颜色控制不稳定：</strong>有时闪烁或出现其他颜色。</li>
+          <li><strong>3D打印结构装配问题：</strong>部件尺寸配合有偏差。</li>
         </ul>
-        <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="调试失败过程图">
       </div>
+
       <div class="solution">
         <h3>解决方案</h3>
         <ul>
-          <li>通过串口持续输出光敏和压力传感器读数，观察真实数据后再调整判断范围。</li>
-          <li>使用 `Adafruit_NeoPixel` 库统一控制灯带，设置较低亮度，降低测试风险。</li>
-          <li>将灯带点亮逻辑改为状态切换，并加入 30 秒自动熄灭，避免反复误触发。</li>
-          <li>根据装配结果调整传感器摆放，让压力触发和灯带展示更直观。</li>
+          <li><strong>FSR灵敏度优化：</strong>调整代码中的检测阈值，增加传感器与脚底接触面积。</li>
+          <li><strong>光线传感器自适应：</strong>根据实际宿舍熄灯环境重新观察亮度数值并调整阈值。</li>
+          <li><strong>LED亮度和颜色控制：</strong>使用 LED 控制库统一控制灯光颜色和亮度。</li>
+          <li><strong>结构改进：</strong>重新检查 3D 打印件尺寸和装配位置，优化灯带与传感器布局。</li>
+          <li><strong>代码优化：</strong>整理控制逻辑，增加状态管理，减少误触发。</li>
         </ul>
+      </div>
+
+      <div class="panel" style="margin-top: 24px;">
+        <h3>经验总结</h3>
+        <p>通过这次项目开发，我认识到硬件调试需要结合真实环境反复测试。传感器阈值、结构装配和程序逻辑会相互影响，只有把电路、结构和代码放到一起验证，才能逐步接近可展示的最终效果。</p>
       </div>
     </section>
 
     <section class="section" id="resources">
       <h2>项目资源</h2>
       <ul class="file-list">
-        <li>嵌入式代码：<a href="code/assignment8/期末代码.ino">期末代码.ino</a></li>
-        <li>演示视频：<a href="video/assignment8/期末演示.mp4">期末演示.mp4</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4">备用远程视频</a></li>
-        <li>3D 打印模型：<a href="fusion_models/assignment8/期末盒子3D打印图纸.stl">盒子 STL</a> · <a href="fusion_models/assignment8/期末盖子3D打印图纸.stl">盖子 STL</a> · <a href="fusion_models/assignment8/期末梯子3D打印图纸.stl">梯子 STL</a></li>
-        <li>项目图片：<a href="images/assignment8/期末项目实物图.jpg">实物图</a> · <a href="images/assignment8/期末项目完成过程图.jpg">过程图</a> · <a href="images/assignment8/期末项目完成过程图失败图.jpg">调试图</a></li>
+        <li>嵌入式代码：<a href="code/assignment8/期末代码.ino">期末项目代码</a></li>
+        <li>演示视频：<a href="video/assignment8/期末演示.mp4">功能演示</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical/raw/master/video/assignment8/期末演示.mp4">备用远程视频</a></li>
+        <li>设计文件：<a href="fusion_models/assignment8/期末盒子3D打印图纸.stl">盒子STL</a> · <a href="fusion_models/assignment8/期末盖子3D打印图纸.stl">盖子STL</a> · <a href="fusion_models/assignment8/期末梯子3D打印图纸.stl">梯子STL</a></li>
+        <li>项目照片：<a href="images/assignment8/期末项目实物图.jpg">实物图</a> · <a href="images/assignment8/期末项目完成过程图.jpg">过程图</a> · <a href="images/assignment8/期末项目完成过程图失败图.jpg">失败图</a></li>
       </ul>
     </section>
 
     <footer>
       <p>© 2026 张文豪 · 期末项目开发日志</p>
-      <p><a href="index.html">返回课程主页</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee 仓库</a></p>
+      <p><a href="index.html">返回主页</a> · <a href="https://gitee.com/outlier-assassin/code-to-physical">Gitee仓库</a></p>
     </footer>
   </main>
 
