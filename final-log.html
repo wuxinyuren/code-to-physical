@@ -19,8 +19,9 @@
 
     body {
       min-height: 100vh;
-      color: #1e2b3c;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      color: #202936;
+      background:
+        linear-gradient(180deg, rgba(234, 244, 255, 0.95) 0%, rgba(247, 249, 252, 0.95) 34%, #f6f8fb 100%);
       font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
       line-height: 1.8;
     }
@@ -63,7 +64,7 @@
     }
 
     .logo {
-      color: #0077ff;
+      color: #155e75;
       font-size: 25px;
       font-weight: 800;
       white-space: nowrap;
@@ -88,8 +89,8 @@
     }
 
     .navbar a:not(.logo):hover {
-      background: rgba(0, 119, 255, 0.06);
-      color: #0077ff;
+      background: rgba(21, 94, 117, 0.08);
+      color: #155e75;
     }
 
     .container {
@@ -99,21 +100,39 @@
     }
 
     .header-section {
-      border-radius: 24px;
-      padding: 56px 40px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      padding: 70px 46px 56px;
       color: #fff;
-      text-align: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+      text-align: left;
+      background: #123047;
+      box-shadow: 0 18px 38px rgba(18, 48, 71, 0.2);
+    }
+
+    .header-section::before {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(12, 31, 48, 0.9) 0%, rgba(12, 31, 48, 0.72) 46%, rgba(12, 31, 48, 0.22) 100%),
+        url("images/assignment8/期末项目实物图.jpg") center / cover;
+      content: "";
+    }
+
+    .header-section > * {
+      position: relative;
+      z-index: 1;
     }
 
     .header-section h1 {
-      font-size: clamp(34px, 5vw, 54px);
+      max-width: 780px;
+      font-size: clamp(34px, 5vw, 58px);
       line-height: 1.18;
       letter-spacing: 0;
     }
 
     .subtitle {
+      max-width: 720px;
       margin-top: 18px;
       color: rgba(255, 255, 255, 0.9);
       font-size: 20px;
@@ -121,7 +140,8 @@
 
     .section {
       margin-top: 40px;
-      border-radius: 20px;
+      border: 1px solid rgba(32, 41, 54, 0.08);
+      border-radius: 14px;
       padding: clamp(28px, 4vw, 42px);
       background: #fff;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
@@ -129,7 +149,7 @@
 
     .section h2 {
       margin-bottom: 30px;
-      border-left: 6px solid #0077ff;
+      border-left: 6px solid #f59e0b;
       padding-left: 18px;
       color: #0a1929;
       font-size: clamp(28px, 4vw, 38px);
@@ -137,7 +157,8 @@
     }
 
     .panel {
-      border-radius: 16px;
+      border: 1px solid rgba(32, 41, 54, 0.08);
+      border-radius: 12px;
       padding: 28px;
       background: #fff;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -186,7 +207,7 @@
 
     .video-box {
       overflow: hidden;
-      border-radius: 16px;
+      border-radius: 12px;
       background: #fff;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
@@ -204,14 +225,14 @@
     }
 
     .team-wrap {
-      border-left: 4px solid #0077ff;
-      border-radius: 18px;
+      border-left: 4px solid #f59e0b;
+      border-radius: 14px;
       padding: 32px;
-      background: linear-gradient(135deg, #f8fafd 0%, #e3f2fd 100%);
+      background: linear-gradient(135deg, #fffdf7 0%, #eef7f6 100%);
     }
 
     .team-wrap h3 {
-      color: #0077ff;
+      color: #155e75;
       font-size: 24px;
     }
 
@@ -223,7 +244,8 @@
     }
 
     .team-card {
-      border-radius: 12px;
+      border: 1px solid rgba(32, 41, 54, 0.08);
+      border-radius: 10px;
       padding: 24px;
       background: #fff;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -247,7 +269,7 @@
       left: 50px;
       width: 4px;
       border-radius: 2px;
-      background: linear-gradient(180deg, #0077ff, #00c6ff);
+      background: linear-gradient(180deg, #155e75, #f59e0b);
       content: "";
     }
 
@@ -264,15 +286,16 @@
       z-index: 1;
       width: 28px;
       height: 28px;
-      border: 4px solid #0077ff;
+      border: 4px solid #155e75;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 4px 12px rgba(0, 119, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(21, 94, 117, 0.28);
       content: "";
     }
 
     .timeline-card {
-      border-radius: 16px;
+      border: 1px solid rgba(32, 41, 54, 0.08);
+      border-radius: 12px;
       padding: 32px;
       background: #fff;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -290,7 +313,7 @@
       border-radius: 20px;
       padding: 5px 16px;
       color: #fff;
-      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      background: linear-gradient(135deg, #155e75, #f59e0b);
       font-size: 14px;
       font-weight: 800;
     }
@@ -304,7 +327,7 @@
     .problem {
       border-radius: 16px;
       padding: 30px;
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
     }
 
     .problem h3 {
@@ -316,7 +339,7 @@
       margin-top: 24px;
       border-radius: 16px;
       padding: 30px;
-      background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     }
 
     .solution h3 {
@@ -329,10 +352,10 @@
       flex-wrap: wrap;
       gap: 18px;
       list-style: none;
-      border: 1px solid rgba(0, 119, 255, 0.1);
+      border: 1px solid rgba(21, 94, 117, 0.12);
       border-radius: 14px;
       padding: 20px 24px;
-      background: linear-gradient(135deg, #f9fcff 0%, #f0f7ff 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #edf7f6 100%);
     }
 
     .file-list li {
@@ -343,7 +366,7 @@
     }
 
     .file-list a {
-      color: #0077ff;
+      color: #155e75;
       font-weight: 800;
     }
 
@@ -370,7 +393,7 @@
       height: 50px;
       border: 0;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #155e75, #f59e0b);
       color: #fff;
       cursor: pointer;
       font-size: 22px;
@@ -445,7 +468,7 @@
   <main class="container" id="top">
     <section class="header-section">
       <h1>宿舍熄灯后下床夜间感应LED灯</h1>
-      <p class="subtitle">期末项目开发日志 · 张文豪 · 2026年6月</p>
+      <p class="subtitle">张文豪整理 · 设计思维周五 EM 第四组 · 2026 年 6 月</p>
     </section>
 
     <section class="section" id="overview">
@@ -453,7 +476,8 @@
       <div class="overview-grid">
         <div class="panel">
           <h3>项目简介</h3>
-          <p>本项目利用光线传感器和 FSR 薄膜压力传感器，设计了一款智能夜间感应 LED 灯。系统通过光线传感器判断环境亮度，在宿舍熄灯后自动进入待机状态；当检测到有人下床踩踏 FSR 传感器时，自动点亮 LED 灯，方便夜间行走，避免打扰室友休息。</p>
+          <p>我们的期末项目围绕宿舍夜间起身这一具体场景展开：熄灯后房间较暗，直接开大灯会影响别人，不开灯又不方便下床走动。因此小组设计了一个由光线传感器和 FSR 薄膜压力传感器共同触发的 LED 夜灯。</p>
+          <p>整体逻辑是先判断环境是否已经变暗，再通过脚踩压力信号触发灯光。这样灯不会在白天误亮，也能在真正需要时提供一段柔和照明。</p>
           <img class="project-img" src="images/assignment8/期末项目实物图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目实物图.jpg" alt="期末项目实物图">
         </div>
         <div class="video-box">
@@ -474,27 +498,27 @@
           <div class="team-card">
             <h4>吕豪</h4>
             <p><strong>角色：</strong>项目协调 / 集成</p>
-            <p><strong>主要任务：</strong>成员分工、监督以及最后的成果汇总</p>
+            <p><strong>主要任务：</strong>负责推进小组节奏，协调成员分工，整理最终成果材料。</p>
           </div>
           <div class="team-card">
             <h4>张文豪</h4>
             <p><strong>角色：</strong>硬件与电路</p>
-            <p><strong>主要任务：</strong>完成传感器、电路焊接和连接</p>
+            <p><strong>主要任务：</strong>参与传感器接线、电路连接与硬件调试，保证各模块能稳定工作。</p>
           </div>
           <div class="team-card">
             <h4>冯国豪</h4>
             <p><strong>角色：</strong>程序与嵌入式</p>
-            <p><strong>主要任务：</strong>撰写相关代码，完成功能的实现</p>
+            <p><strong>主要任务：</strong>编写控制程序，实现光线判断、压力检测和灯光控制。</p>
           </div>
           <div class="team-card">
             <h4>陈家兴</h4>
             <p><strong>角色：</strong>结构与制造</p>
-            <p><strong>主要任务：</strong>材料选型、3D打印、部件组装、安装结构、灯带布线</p>
+            <p><strong>主要任务：</strong>完成结构材料选择、3D 打印、部件装配和灯带安装布线。</p>
           </div>
           <div class="team-card">
             <h4>于博涵</h4>
             <p><strong>角色：</strong>展示与测试</p>
-            <p><strong>主要任务：</strong>汇报成果的应用场景、成果的意义、成果展示和原理解释</p>
+            <p><strong>主要任务：</strong>负责展示测试，说明应用场景、作品意义和基本工作原理。</p>
           </div>
         </div>
       </div>
@@ -507,11 +531,12 @@
           <div class="timeline-card">
             <span class="date">6月12日 15:00</span>
             <h3>项目启动与方案设计</h3>
-            <p>参与 Hackathon 活动，确定项目主题和技术方案。</p>
+            <p>小组先从宿舍生活中的真实不便出发，讨论适合课程期末展示的作品方向，并把主题确定为“熄灯后下床夜间感应灯”。</p>
             <ul>
-              <li>确定使用 Arduino 作为主控平台</li>
-              <li>选择光线传感器和 FSR 压力传感器</li>
-              <li>设计 3D 打印外壳方案</li>
+              <li>明确使用 Arduino 作为主控平台</li>
+              <li>确定用光线传感器判断熄灯环境</li>
+              <li>确定用 FSR 压力传感器识别脚踩动作</li>
+              <li>初步规划外壳、灯带和传感器的安装位置</li>
             </ul>
           </div>
         </div>
@@ -520,12 +545,12 @@
           <div class="timeline-card">
             <span class="date">6月12日 16:30</span>
             <h3>硬件组装与电路搭建</h3>
-            <p>开始硬件部分的组装工作。</p>
+            <p>进入硬件搭建阶段后，小组把主控板、传感器和 LED 模块逐步接入，先保证每个模块单独可用，再组合到同一个系统里。</p>
             <ul>
-              <li>连接 Arduino 主板</li>
-              <li>搭建光线传感器电路</li>
-              <li>连接 FSR 薄膜压力传感器</li>
-              <li>焊接 LED 灯模块</li>
+              <li>完成主控板与传感器之间的基础连接</li>
+              <li>检查光线传感器在明暗环境下的数值变化</li>
+              <li>测试 FSR 薄膜压力传感器的触发范围</li>
+              <li>整理 LED 灯模块的供电与控制线</li>
             </ul>
           </div>
         </div>
@@ -534,12 +559,12 @@
           <div class="timeline-card">
             <span class="date">6月12日 18:00</span>
             <h3>软件开发与调试</h3>
-            <p>编写 Arduino 程序代码，完成传感器读取和 LED 控制逻辑。</p>
+            <p>软件部分主要解决“什么时候亮”和“亮多久”的问题。程序需要同时读取环境亮度和压力信号，再根据状态控制 LED 灯。</p>
             <ul>
-              <li>实现光线传感器数据读取</li>
-              <li>开发 FSR 压力检测逻辑</li>
-              <li>编写 LED 灯控制算法</li>
-              <li>测试程序功能</li>
+              <li>读取光线传感器数据并设置暗光阈值</li>
+              <li>根据 FSR 数值判断是否发生踩踏</li>
+              <li>编写 LED 点亮、熄灭和状态切换逻辑</li>
+              <li>通过多次测试调整触发条件</li>
             </ul>
           </div>
         </div>
@@ -548,12 +573,12 @@
           <div class="timeline-card">
             <span class="date">6月13日 9:00</span>
             <h3>3D打印与结构优化</h3>
-            <p>完成外壳的 3D 打印和结构组装。</p>
+            <p>结构制作阶段把前面完成的电路放入 3D 打印外壳中，重点检查传感器位置、灯带走线和整体装配是否方便展示。</p>
             <ul>
-              <li>打印盒子主体结构</li>
-              <li>打印盖子部件</li>
-              <li>组装所有零部件</li>
-              <li>优化传感器布局</li>
+              <li>打印盒子、盖子和支撑结构</li>
+              <li>把灯带和线路放入外壳内部</li>
+              <li>根据实物尺寸调整传感器摆放</li>
+              <li>检查装配后的稳定性和可维护性</li>
             </ul>
             <img class="project-img" src="images/assignment8/期末项目完成过程图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图.jpg" alt="开发过程图">
           </div>
@@ -563,12 +588,12 @@
           <div class="timeline-card">
             <span class="date">6月13日 14:00</span>
             <h3>最终测试与优化</h3>
-            <p>进行完整的系统测试和功能优化。</p>
+            <p>最后对完整作品进行联调，围绕宿舍熄灯后的使用情境检查感应是否及时、灯光是否稳定，并录制演示视频作为提交材料。</p>
             <ul>
-              <li>测试光线感应灵敏度</li>
-              <li>调整 FSR 压力阈值</li>
-              <li>优化 LED 亮度控制</li>
-              <li>录制功能演示视频</li>
+              <li>在不同光照条件下验证暗光判断</li>
+              <li>反复测试压力触发是否可靠</li>
+              <li>调整 LED 亮度，让夜间照明不刺眼</li>
+              <li>完成最终功能展示和素材归档</li>
             </ul>
           </div>
         </div>
@@ -581,27 +606,27 @@
         <h3>遇到的问题</h3>
         <img class="project-img" src="images/assignment8/期末项目完成过程图失败图.jpg" data-fallback-src="https://gitee.com/outlier-assassin/code-to-physical/raw/master/images/assignment8/期末项目完成过程图失败图.jpg" alt="开发失败图">
         <ul>
-          <li><strong>FSR传感器灵敏度不足：</strong>踩踏时检测不够灵敏。</li>
-          <li><strong>光线传感器阈值设定困难：</strong>不同环境下差异较大。</li>
-          <li><strong>LED灯的颜色控制不稳定：</strong>有时闪烁或出现其他颜色。</li>
-          <li><strong>3D打印结构装配问题：</strong>部件尺寸配合有偏差。</li>
+          <li><strong>压力信号不够稳定：</strong>脚踩力度和接触位置不同，FSR 读数会有明显变化。</li>
+          <li><strong>亮度阈值不好一次确定：</strong>教室、宿舍和拍摄环境的光照差异会影响判断结果。</li>
+          <li><strong>灯光控制需要反复验证：</strong>LED 模块接线和程序参数不合适时，容易出现闪烁或显示异常。</li>
+          <li><strong>外壳装配需要留余量：</strong>3D 打印件、线路和传感器叠在一起后，实际空间比建模时更紧张。</li>
         </ul>
       </div>
 
       <div class="solution">
         <h3>解决方案</h3>
         <ul>
-          <li><strong>FSR灵敏度优化：</strong>调整代码中的检测阈值，增加传感器与脚底接触面积。</li>
-          <li><strong>光线传感器自适应：</strong>根据实际宿舍熄灯环境重新观察亮度数值并调整阈值。</li>
-          <li><strong>LED亮度和颜色控制：</strong>使用 LED 控制库统一控制灯光颜色和亮度。</li>
-          <li><strong>结构改进：</strong>重新检查 3D 打印件尺寸和装配位置，优化灯带与传感器布局。</li>
-          <li><strong>代码优化：</strong>整理控制逻辑，增加状态管理，减少误触发。</li>
+          <li><strong>先观察数据再设阈值：</strong>通过串口和实际踩踏测试记录数值范围，再调整压力触发条件。</li>
+          <li><strong>按使用场景调光敏参数：</strong>以“熄灯后的宿舍亮度”为目标，而不是只看单次测试环境。</li>
+          <li><strong>统一灯光控制方式：</strong>用稳定的 LED 控制库处理颜色和亮度，减少异常显示。</li>
+          <li><strong>边装配边修正结构：</strong>根据实物空间调整传感器、灯带和线路位置。</li>
+          <li><strong>整理状态逻辑：</strong>把检测、点亮和熄灭过程分清，降低误触发概率。</li>
         </ul>
       </div>
 
       <div class="panel" style="margin-top: 24px;">
         <h3>经验总结</h3>
-        <p>通过这次项目开发，我认识到硬件调试需要结合真实环境反复测试。传感器阈值、结构装配和程序逻辑会相互影响，只有把电路、结构和代码放到一起验证，才能逐步接近可展示的最终效果。</p>
+        <p>这次项目让我感觉到，从“想法可行”到“作品能稳定演示”中间还有很多细节。传感器阈值、装配空间、代码状态和展示环境都会互相影响，真正做成实物以后，才会发现哪些地方需要继续调。</p>
       </div>
     </section>
 
