@@ -1,0 +1,681 @@
+// ============================================================================
+// E-Ink Novel Reader for Wemos LOLIN32 Lite (单书优化版)
+// 移除多书选择，UP/DOWN按钮闲置，长按Boot自动打开第一本书
+// ============================================================================
+
+#include <Arduino.h>
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <SPI.h>
+#include <GxEPD2_3C.h>
+#include <ESPmDNS.h>
+#include <SPIFFS.h>
+#include <Preferences.h>
+#include <ArduinoJson.h>
+#include <OneButton.h>
+#include <U8g2_for_Adafruit_GFX.h>
+
+// ==================== WiFi配置 ====================
+const char* WIFI_SSID = "en";
+const char* WIFI_PASSWORD = "18855847181";
+const char* AP_SSID = "EInk-Reader";
+const char* AP_PASSWORD = "18855847181";
+
+const int WEB_SERVER_PORT = 80;
+const char* MDNS_HOSTNAME = "littlebook";
+
+// 屏幕尺寸 (竖屏)
+#define EPD_WIDTH 104
+#define EPD_HEIGHT 212
+
+// 墨水屏控制引脚
+#define PIN_CS    5
+#define PIN_DC    4
+#define PIN_RST   16
+#define PIN_BUSY  15
+
+// 按钮引脚（UP/DOWN不再使用，但保留定义避免编译错误）
+#define BOOT_BUTTON_PIN  27
+#define UP_BUTTON_PIN    12
+#define DOWN_BUTTON_PIN  14
+
+// 排版参数
+#define CHARS_PER_LINE  9      // 每行最多9个汉字
+#define LINES_PER_PAGE 12      // 每页12行
+
+// ==================== 全局对象 ====================
+
+GxEPD2_3C<GxEPD2_213_Z98c, GxEPD2_213_Z98c::HEIGHT> display(
+    GxEPD2_213_Z98c(PIN_CS, PIN_DC, PIN_RST, PIN_BUSY));
+AsyncWebServer server(WEB_SERVER_PORT);
+Preferences preferences;
+U8G2_FOR_ADAFRUIT_GFX u8g2;
+
+// 阅读状态
+struct ReadingState {
+    bool isReading;
+    File bookFile;
+    String currentBook;
+    int currentPage;       // 1-based
+    int totalPages;
+};
+ReadingState reading = {false, File(), "", 0, 0};
+
+// 页索引 (每页起始字节偏移)
+std::vector<size_t> pageIndex;
+
+// 按钮对象（保留UP/DOWN对象但功能空）
+OneButton buttonBoot(BOOT_BUTTON_PIN, true, true);
+OneButton buttonUp(UP_BUTTON_PIN, true, true);
+OneButton buttonDown(DOWN_BUTTON_PIN, true, true);
+
+// ==================== 工具函数 ====================
+
+String extractFileName(const String& fullPath) {
+    int idx = fullPath.lastIndexOf('/');
+    if (idx >= 0) return fullPath.substring(idx + 1);
+    return fullPath;
+}
+
+// ==================== SPIFFS 管理 ====================
+
+bool initSPIFFS() {
+    if (!SPIFFS.begin(true)) {
+        Serial.println("SPIFFS Mount Failed");
+        return false;
+    }
+    if (!SPIFFS.exists("/books")) SPIFFS.mkdir("/books");
+    return true;
+}
+
+String getStorageInfo() {
+    size_t total = SPIFFS.totalBytes();
+    size_t used = SPIFFS.usedBytes();
+    char buf[40];
+    sprintf(buf, "%d KB / %d KB", used / 1024, total / 1024);
+    return String(buf);
+}
+
+// 获取 /books 下第一个文件的名字（用于自动打开）
+String getFirstBook() {
+    String name = "";
+    File root = SPIFFS.open("/books");
+    if (root && root.isDirectory()) {
+        File file = root.openNextFile();
+        if (file && !file.isDirectory()) {
+            name = extractFileName(file.name());
+            file.close();
+        }
+        root.close();
+    }
+    return name;
+}
+
+// 书籍列表 API 仍保留，方便网页管理
+String listBooks() {
+    JsonDocument doc;
+    JsonArray arr = doc.to<JsonArray>();
+    File root = SPIFFS.open("/books");
+    if (root && root.isDirectory()) {
+        File file = root.openNextFile();
+        while (file) {
+            if (!file.isDirectory()) {
+                JsonObject b = arr.add<JsonObject>();
+                String name = extractFileName(file.name());
+                b["name"] = name;
+                b["size"] = String(file.size()) + " bytes";
+                b["pages"] = 0;
+            }
+            file.close();
+            file = root.openNextFile();
+        }
+        root.close();
+    }
+    String out;
+    serializeJson(doc, out);
+    return out;
+}
+
+bool deleteBook(const String& bookName) {
+    String path = "/books/" + bookName;
+    if (reading.isReading && reading.currentBook == bookName) {
+        reading.bookFile.close();
+        reading.isReading = false;
+        reading.currentBook = "";
+        pageIndex.clear();
+    }
+    return SPIFFS.exists(path) ? SPIFFS.remove(path) : false;
+}
+
+bool saveReadingRecord(const String& book, long pos, int page) {
+    if (!preferences.begin("reading", false)) return false;
+    preferences.putString("bookName", book);
+    preferences.putLong("filePos", pos);
+    preferences.putInt("page", page);
+    preferences.end();
+    return true;
+}
+
+bool loadReadingRecord(String& book, long& pos, int& page) {
+    if (!preferences.begin("reading", true)) return false;
+    book = preferences.getString("bookName", "");
+    pos = preferences.getLong("filePos", 0);
+    page = preferences.getInt("page", 0);
+    preferences.end();
+    return book.length() > 0;
+}
+
+// ==================== 页索引构建（按实际行数切分） ====================
+
+bool buildPageIndex(File& file) {
+    pageIndex.clear();
+    if (!file || file.size() == 0) return false;
+    file.seek(0);
+
+    int lineCount = 0;
+    int charInLine = 0;
+
+    while (file.available()) {
+        size_t posBeforeChar = file.position();
+
+        uint8_t c = file.read();
+        int charLen = 1;
+        if ((c & 0x80) == 0x00) charLen = 1;
+        else if ((c & 0xE0) == 0xC0) charLen = 2;
+        else if ((c & 0xF0) == 0xE0) charLen = 3;
+        else if ((c & 0xF8) == 0xF0) charLen = 4;
+        else continue;
+
+        for (int i = 1; i < charLen && file.available(); i++) {
+            file.read();
+        }
+
+        bool isNewline = (charLen == 1 && c == '\n');
+
+        if (isNewline) {
+            lineCount++;
+            charInLine = 0;
+            if (lineCount >= LINES_PER_PAGE) {
+                pageIndex.push_back(file.position());
+                lineCount = 0;
+            }
+            continue;
+        }
+
+        int charW = (charLen == 1) ? 1 : 2;
+
+        if (charInLine + charW > CHARS_PER_LINE * 2) {
+            lineCount++;
+            charInLine = 0;
+            if (lineCount >= LINES_PER_PAGE) {
+                pageIndex.push_back(posBeforeChar);
+                lineCount = 0;
+                charInLine = charW;   // 当前字符属于新页第一行
+                continue;
+            }
+        }
+
+        charInLine += charW;
+    }
+
+    Serial.printf("Page index built: %d pages\n", pageIndex.size() + 1);
+    return true;
+}
+
+String readPageContent(int page) {
+    if (!reading.bookFile || pageIndex.empty() && page != 0) return "";
+    size_t start = (page == 0) ? 0 : pageIndex[page - 1];
+    size_t end = (page < pageIndex.size()) ? pageIndex[page] : reading.bookFile.size();
+    reading.bookFile.seek(start);
+    String content;
+    while (reading.bookFile.position() < end) {
+        content += (char)reading.bookFile.read();
+    }
+    return content;
+}
+
+// ==================== 显示函数 ====================
+
+void displayMessage(const String& title, const String& msg) {
+    display.setFullWindow();
+    display.firstPage();
+    do {
+        display.fillScreen(GxEPD_WHITE);
+        u8g2.setFontMode(1);
+        u8g2.setForegroundColor(GxEPD_BLACK);
+        u8g2.setBackgroundColor(GxEPD_WHITE);
+        u8g2.setFont(u8g2_font_wqy12_t_gb2312a);
+
+        int titleWidth = u8g2.getUTF8Width(title.c_str());
+        u8g2.setCursor((EPD_WIDTH - titleWidth) / 2, 30);
+        u8g2.print(title);
+
+        int msgWidth = u8g2.getUTF8Width(msg.c_str());
+        u8g2.setCursor((EPD_WIDTH - msgWidth) / 2, 60);
+        u8g2.print(msg);
+    } while (display.nextPage());
+    display.hibernate();
+}
+
+void displayText(const String& text, int page, int total) {
+    display.setFullWindow();
+    display.firstPage();
+    do {
+        display.fillScreen(GxEPD_WHITE);
+        u8g2.setFontMode(1);
+        u8g2.setForegroundColor(GxEPD_BLACK);
+        u8g2.setBackgroundColor(GxEPD_WHITE);
+        u8g2.setFont(u8g2_font_wqy12_t_gb2312a);
+
+        int lineY = 18, lineCount = 0;
+        String line;
+        int charWidthSum = 0;
+        int byteIdx = 0;
+
+        while (byteIdx < text.length() && lineCount < LINES_PER_PAGE) {
+            uint8_t c = text[byteIdx];
+            int charLen = 1;
+            if ((c & 0x80) == 0x00) charLen = 1;
+            else if ((c & 0xE0) == 0xC0) charLen = 2;
+            else if ((c & 0xF0) == 0xE0) charLen = 3;
+            else if ((c & 0xF8) == 0xF0) charLen = 4;
+            else { byteIdx++; continue; }
+
+            if (byteIdx + charLen > text.length()) break;
+            String oneChar = text.substring(byteIdx, byteIdx + charLen);
+
+            if (oneChar == "\n") {
+                u8g2.setCursor(0, lineY);
+                u8g2.println(line);
+                line = "";
+                charWidthSum = 0;
+                lineY += 16;
+                lineCount++;
+                byteIdx += charLen;
+                continue;
+            }
+
+            int charW = (charLen == 1) ? 1 : 2;
+
+            if (charWidthSum + charW > CHARS_PER_LINE * 2) {
+                u8g2.setCursor(0, lineY);
+                u8g2.println(line);
+                line = "";
+                charWidthSum = 0;
+                lineY += 16;
+                lineCount++;
+                if (lineCount >= LINES_PER_PAGE) break;
+            }
+            line += oneChar;
+            charWidthSum += charW;
+            byteIdx += charLen;
+        }
+        if (line.length() > 0 && lineCount < LINES_PER_PAGE) {
+            u8g2.setCursor(0, lineY);
+            u8g2.println(line);
+        }
+
+        // 页码
+        u8g2.setFont(u8g2_font_6x10_tf);
+        u8g2.setForegroundColor(GxEPD_BLACK);
+        char buf[20];
+        sprintf(buf, "%d/%d", page, total);
+        int pw = u8g2.getUTF8Width(buf);
+        u8g2.setCursor(EPD_WIDTH - pw - 2, EPD_HEIGHT - 5);
+        u8g2.print(buf);
+        u8g2.setFont(u8g2_font_wqy12_t_gb2312a);
+    } while (display.nextPage());
+    display.hibernate();
+}
+
+// ==================== 书籍操作 ====================
+
+bool openBook(const String& bookName) {
+    String path = "/books/" + bookName;
+    if (!SPIFFS.exists(path)) return false;
+    if (reading.bookFile) reading.bookFile.close();
+    reading.bookFile = SPIFFS.open(path, "r");
+    if (!reading.bookFile) {
+        Serial.println("Failed to open file");
+        return false;
+    }
+
+    reading.currentBook = bookName;
+    if (!buildPageIndex(reading.bookFile)) {
+        reading.bookFile.close();
+        reading.isReading = false;
+        Serial.println("Failed to build page index");
+        return false;
+    }
+    reading.totalPages = pageIndex.empty() ? 1 : pageIndex.size() + 1;
+    reading.currentPage = 1;
+    reading.isReading = true;
+    String content = readPageContent(0);
+    displayText(content, reading.currentPage, reading.totalPages);
+    saveReadingRecord(bookName, 0, 1);
+    Serial.printf("Opened book: %s, total pages: %d\n", bookName.c_str(), reading.totalPages);
+    return true;
+}
+
+bool resumeReading() {
+    String bookName; long pos; int page;
+    if (!loadReadingRecord(bookName, pos, page)) return false;
+    if (!SPIFFS.exists("/books/" + bookName)) return false;
+    if (reading.bookFile) reading.bookFile.close();
+    reading.bookFile = SPIFFS.open("/books/" + bookName, "r");
+    if (!reading.bookFile) return false;
+    if (!buildPageIndex(reading.bookFile)) {
+        reading.bookFile.close();
+        return false;
+    }
+    reading.currentBook = bookName;
+    reading.totalPages = pageIndex.empty() ? 1 : pageIndex.size() + 1;
+    reading.currentPage = constrain(page, 1, reading.totalPages);
+    reading.isReading = true;
+    String content = readPageContent(reading.currentPage - 1);
+    displayText(content, reading.currentPage, reading.totalPages);
+    Serial.printf("Resumed reading: %s, page %d/%d\n", bookName.c_str(), reading.currentPage, reading.totalPages);
+    return true;
+}
+
+void nextPage() {
+    if (!reading.isReading || reading.currentPage >= reading.totalPages) {
+        Serial.println("Cannot go to next page");
+        return;
+    }
+    reading.currentPage++;
+    String content = readPageContent(reading.currentPage - 1);
+    displayText(content, reading.currentPage, reading.totalPages);
+    saveReadingRecord(reading.currentBook, 0, reading.currentPage);
+    Serial.printf("Next page: %d/%d\n", reading.currentPage, reading.totalPages);
+}
+
+void prevPage() {
+    if (!reading.isReading || reading.currentPage <= 1) {
+        Serial.println("Cannot go to previous page");
+        return;
+    }
+    reading.currentPage--;
+    String content = readPageContent(reading.currentPage - 1);
+    displayText(content, reading.currentPage, reading.totalPages);
+    saveReadingRecord(reading.currentBook, 0, reading.currentPage);
+    Serial.printf("Prev page: %d/%d\n", reading.currentPage, reading.totalPages);
+}
+
+// ==================== 按钮处理（简化版） ====================
+
+void onBootSingleClick() {
+    Serial.println("Button: single click (next page)");
+    if (reading.isReading) nextPage();
+}
+
+void onBootDoubleClick() {
+    Serial.println("Button: double click (prev page)");
+    if (reading.isReading) prevPage();
+}
+
+void onBootLongPress() {
+    Serial.println("Button: long press");
+    if (reading.isReading) {
+        // 退出阅读
+        reading.bookFile.close();
+        reading.isReading = false;
+        pageIndex.clear();
+        displayMessage("准备就绪", "长按Boot开始阅读");
+    } else {
+        // 自动打开第一本书
+        String first = getFirstBook();
+        if (first.length() > 0) {
+            openBook(first);
+        } else {
+            displayMessage("没有书籍", "请通过网页上传");
+        }
+    }
+}
+
+// UP/DOWN 按钮现在什么都不做
+void onUpClick() {
+    // 空
+}
+
+void onDownClick() {
+    // 空
+}
+
+void setupButton() {
+    pinMode(UP_BUTTON_PIN, INPUT_PULLUP);
+    pinMode(DOWN_BUTTON_PIN, INPUT_PULLUP);
+    buttonBoot.attachClick(onBootSingleClick);
+    buttonBoot.attachDoubleClick(onBootDoubleClick);
+    buttonBoot.attachLongPressStart(onBootLongPress);
+    buttonBoot.setClickMs(250);
+    buttonBoot.setDebounceMs(50);
+    buttonBoot.setPressMs(800);
+    buttonUp.attachClick(onUpClick);
+    buttonUp.setDebounceMs(50);
+    buttonDown.attachClick(onDownClick);
+    buttonDown.setDebounceMs(50);
+}
+
+void handleButton() {
+    buttonBoot.tick();
+    buttonUp.tick();      // 可注释掉以节省CPU，保留也无妨
+    buttonDown.tick();
+}
+
+// ==================== Web 服务器 ====================
+
+String bodyToString(uint8_t* data, size_t len) {
+    char* str = new char[len + 1];
+    memcpy(str, data, len);
+    str[len] = '\0';
+    String result(str);
+    delete[] str;
+    return result;
+}
+
+void setupAPI() {
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *req) {
+        req->send(200, "text/html; charset=utf-8", R"HTML(
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>墨水屏阅读器</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
+        body{max-width:600px;margin:0 auto;padding:20px;background:#f5f5f5;}
+        .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        h1{font-size:24px;margin-bottom:20px;text-align:center;color:#333;}
+        .upload-area{border:2px dashed #ccc;border-radius:8px;padding:40px;text-align:center;cursor:pointer;}
+        .upload-area:hover{border-color:#666;}
+        .upload-area input{display:none;}
+        .book-list{list-style:none;}
+        .book-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #eee;}
+        .book-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;}
+        .btn-primary{background:#007bff;color:#fff;}
+        .btn-danger{background:#dc3545;color:#fff;}
+        .status{margin-top:10px;text-align:center;color:#666;}
+    </style>
+</head>
+<body>
+    <h1>📚 墨水屏阅读器</h1>
+    <div class="card">
+        <h3>上传书籍</h3>
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <p>点击上传 TXT 文件</p>
+            <input type="file" id="fileInput" accept=".txt" onchange="uploadBook(this)">
+        </div>
+        <div class="status" id="uploadStatus"></div>
+    </div>
+    <div class="card">
+        <h3>书籍列表</h3>
+        <ul class="book-list" id="bookList"></ul>
+    </div>
+    <script>
+        function loadBooks() {
+            fetch('/api/books')
+            .then(r=>r.json())
+            .then(books=>{
+                const list = document.getElementById('bookList');
+                list.innerHTML = books.length ? '' : '<li>暂无书籍</li>';
+                books.forEach(b=>{
+                    const li = document.createElement('li');
+                    li.className='book-item';
+                    li.innerHTML=`<span class="book-name">${b.name} (${b.size})</span>
+                    <div>
+                        <button class="btn btn-primary" onclick="openBook('${b.name}')">打开</button>
+                        <button class="btn btn-danger" onclick="deleteBook('${b.name}')">删除</button>
+                    </div>`;
+                    list.appendChild(li);
+                });
+            });
+        }
+        function uploadBook(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const status = document.getElementById('uploadStatus');
+            status.textContent='上传中...';
+            const fd = new FormData();
+            fd.append('file', file);
+            fetch('/api/upload', {method:'POST', body:fd})
+            .then(r=>r.json())
+            .then(d=>{ status.textContent=d.success?'上传成功！':'失败：'+d.message; loadBooks(); });
+        }
+        function openBook(name) {
+            fetch('/api/read', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({book:name})})
+            .then(r=>r.json())
+            .then(d=>alert(d.success?'已打开':'失败：'+d.message));
+        }
+        function deleteBook(name) {
+            if(!confirm('确定删除?')) return;
+            fetch('/api/delete', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({book:name})})
+            .then(r=>r.json())
+            .then(d=>{ if(d.success) loadBooks(); else alert('失败：'+d.message); });
+        }
+        window.onload=loadBooks;
+    </script>
+</body>
+</html>
+        )HTML");
+    });
+
+    server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *req) {
+        JsonDocument d;
+        d["currentPage"] = reading.isReading ? reading.currentPage : 0;
+        d["totalPages"] = reading.isReading ? reading.totalPages : 0;
+        d["currentBook"] = reading.isReading ? reading.currentBook : "无";
+        d["storage"] = getStorageInfo();
+        String out; serializeJson(d, out);
+        req->send(200, "application/json", out);
+    });
+
+    server.on("/api/books", HTTP_GET, [](AsyncWebServerRequest *req) {
+        req->send(200, "application/json", listBooks());
+    });
+
+    server.on("/api/upload", HTTP_POST, [](AsyncWebServerRequest *req) {
+        JsonDocument d; d["success"]=true; d["message"]="上传完成";
+        String out; serializeJson(d, out);
+        req->send(200, "application/json", out);
+    }, [](AsyncWebServerRequest *req, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+        static File uploadFile;
+        if (index == 0) {
+            String path = "/books/" + filename;
+            uploadFile = SPIFFS.open(path, "w");
+            if (!uploadFile) Serial.println("Upload open failed");
+        }
+        if (uploadFile) uploadFile.write(data, len);
+        if (final && uploadFile) uploadFile.close();
+    });
+
+    server.on("/api/read", HTTP_POST, [](AsyncWebServerRequest *req) {}, NULL,
+        [](AsyncWebServerRequest *req, uint8_t *data, size_t len, size_t index, size_t total) {
+            String json = bodyToString(data, len);
+            JsonDocument d; deserializeJson(d, json);
+            String book = d["book"].as<String>();
+            bool ok = openBook(book);
+            JsonDocument resp; resp["success"] = ok; resp["message"] = ok ? "已打开" : "打开失败";
+            String out; serializeJson(resp, out);
+            req->send(200, "application/json", out);
+        });
+
+    server.on("/api/delete", HTTP_POST, [](AsyncWebServerRequest *req) {}, NULL,
+        [](AsyncWebServerRequest *req, uint8_t *data, size_t len, size_t index, size_t total) {
+            String json = bodyToString(data, len);
+            JsonDocument d; deserializeJson(d, json);
+            String book = d["book"].as<String>();
+            bool ok = deleteBook(book);
+            JsonDocument resp; resp["success"] = ok; resp["message"] = ok ? "已删除" : "删除失败";
+            String out; serializeJson(resp, out);
+            req->send(200, "application/json", out);
+        });
+
+    server.on("/api/next", HTTP_POST, [](AsyncWebServerRequest *req) {
+        nextPage();
+        JsonDocument d; d["success"]=true; d["currentPage"]=reading.currentPage;
+        String out; serializeJson(d, out);
+        req->send(200, "application/json", out);
+    });
+    server.on("/api/prev", HTTP_POST, [](AsyncWebServerRequest *req) {
+        prevPage();
+        JsonDocument d; d["success"]=true; d["currentPage"]=reading.currentPage;
+        String out; serializeJson(d, out);
+        req->send(200, "application/json", out);
+    });
+
+    server.begin();
+}
+
+// ==================== WiFi ====================
+
+void setupWiFi() {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    int tries = 0;
+    while (WiFi.status() != WL_CONNECTED && tries++ < 30) {
+        delay(500);
+        Serial.print(".");
+    }
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("\nWiFi OK, IP: " + WiFi.localIP().toString());
+        MDNS.begin(MDNS_HOSTNAME);
+        displayMessage("WiFi已连接", WiFi.localIP().toString());
+    } else {
+        WiFi.mode(WIFI_AP);
+        WiFi.softAP(AP_SSID, AP_PASSWORD);
+        Serial.println("AP mode, IP: " + WiFi.softAPIP().toString());
+        displayMessage("热点模式", WiFi.softAPIP().toString());
+    }
+}
+
+// ==================== Setup & Loop ====================
+
+void setup() {
+    Serial.begin(115200);
+    delay(100);
+    display.init(115200, true, 2, false);
+    display.setRotation(0);       // 竖屏
+    u8g2.begin(display);
+    displayMessage("启动中", "正在初始化...");
+
+    if (!initSPIFFS()) {
+        displayMessage("错误", "文件系统初始化失败");
+        while (1) delay(1000);
+    }
+
+    setupWiFi();
+    setupAPI();
+    setupButton();
+
+    if (!resumeReading()) {
+        displayMessage("准备就绪", "长按Boot开始阅读");
+    }
+}
+
+void loop() {
+    handleButton();
+    delay(10);
+}
