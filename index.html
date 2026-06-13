@@ -289,6 +289,19 @@
       aspect-ratio: 16 / 10;
     }
 
+    .project figure.video-figure {
+      aspect-ratio: auto;
+      background: #fff;
+    }
+
+    .video-figure video {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      background: #101828;
+      object-fit: contain;
+    }
+
     .project-body {
       padding: 18px;
       display: flex;
@@ -357,10 +370,12 @@
     }
 
     .video-status {
-      margin: 8px 0 0;
-      padding: 0 12px 12px;
+      margin: 0;
+      padding: 10px 14px 12px;
+      background: #fff;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.5;
     }
 
     .feature {
@@ -593,7 +608,7 @@
         </article>
 
         <article class="project">
-          <figure>
+          <figure class="video-figure">
             <video id="servoVideo" controls muted preload="metadata">
               <source src="video/assignment4/wifi控制舵机演示视频.mp4" type="video/mp4">
               当前浏览器不支持视频播放。
